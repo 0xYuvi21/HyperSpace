@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HyperSpace — Leaderboard. See how you rank against the global community and your friends based on contest ratings." />
+  <title>Leaderboard — HyperSpace</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue: #6b8cff;
+      --pink: #ff6b9d;
+      --dark: #0d0d14;
+      --light-bg: #f8f9fb;
+      --card-bg: #ffffff;
+      --text-main: #111;
+      --text-sub: #555;
+      --accent: #6b8cff;
+      --green: #3ecf8e;
+      --orange: #ff8c42;
+      --purple: #a78bff;
+      --gold: #f5c842;
+      --silver: #b0bec5;
+      --bronze: #cd7f32;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    header {
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248,249,251,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #444;
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 24px;
+      white-space: nowrap;
+      transition: color 0.25s;
+    }
+
+    nav a:hover { color: var(--blue); }
+    nav a.active { color: var(--blue); font-weight: 700; }
+
+    /* ── PROFILE AVATAR ── */
+    .profile-btn {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      font-family: inherit;
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      transition: box-shadow 0.25s, transform 0.2s;
+    }
+
+    .profile-btn:hover .profile-avatar {
+      box-shadow: 0 0 0 3px rgba(107,140,255,0.35);
+      transform: scale(1.06);
+    }
+
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      min-width: 200px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+      padding: 8px;
+      z-index: 200;
+      animation: dropIn 0.18s ease;
+    }
+
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-btn.open .profile-dropdown { display: block; }
+
+    .pd-info {
+      padding: 10px 12px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 6px;
+    }
+
+    .pd-name { font-size: 14px; font-weight: 700; color: #111; }
+    .pd-role { font-size: 12px; color: #888; margin-top: 2px; }
+
+    .pd-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .pd-item:hover { background: var(--light-bg); color: var(--blue); }
+    .pd-item.danger { color: #e85555; }
+    .pd-item.danger:hover { background: rgba(232,85,85,0.06); color: #e85555; }
+
+    .nav-cta {
+      background: var(--dark);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 14px !important;
+      transition: background 0.25s !important;
+    }
+
+    .nav-cta:hover { background: var(--blue) !important; }
+
+    /* ── HERO BANNER ── */
+    .lb-hero {
+      background: var(--dark);
+      padding: 72px 8% 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lb-hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.09;
+    }
+
+    .lb-hero-blob.a { width: 420px; height: 420px; background: var(--blue); top: -100px; right: -60px; }
+    .lb-hero-blob.b { width: 320px; height: 320px; background: var(--pink); bottom: -60px; left: -40px; }
+    .lb-hero-blob.c { width: 260px; height: 260px; background: var(--purple); top: 20px; left: 35%; }
+
+    .lb-hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .lb-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(107,140,255,0.15);
+      border: 1px solid rgba(107,140,255,0.3);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .lb-hero h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    .lb-hero h1 span {
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .lb-hero p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 300;
+      max-width: 540px;
+      line-height: 1.65;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .lb-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 28px;
+      padding: 40px 8% 80px;
+      align-items: start;
+    }
+
+    /* ── LEFT PANEL ── */
+    .lb-main { display: flex; flex-direction: column; gap: 0; }
+
+    /* Tabs */
+    .lb-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 16px;
+      padding: 6px;
+      width: fit-content;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+
+    .lb-tab {
+      padding: 10px 28px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #888;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+      transition: background 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lb-tab .tab-count {
+      background: rgba(107,140,255,0.1);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .lb-tab.active {
+      background: var(--dark);
+      color: #fff;
+    }
+
+    .lb-tab.active .tab-count {
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* Search + Filter bar */
+    .lb-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .lb-search {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .lb-search svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #aaa;
+      pointer-events: none;
+    }
+
+    .lb-search input {
+      width: 100%;
+      padding: 11px 16px 11px 40px;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-main);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .lb-search input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(107,140,255,0.12);
+    }
+
+    .lb-search input::placeholder { color: #bbb; }
+
+    .lb-filter {
+      padding: 11px 18px;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .lb-filter:focus { border-color: var(--blue); }
+
+    /* Column headers */
+    .lb-header-row {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 12px;
+      padding: 0 20px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #aaa;
+    }
+
+    /* User rows */
+    .lb-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .lb-row {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: #fff;
+      border: 1.5px solid #eee;
+      border-radius: 18px;
+      padding: 16px 20px;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lb-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: transparent;
+      transition: background 0.25s;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .lb-row:hover {
+      transform: translateX(4px);
+      box-shadow: 0 8px 32px rgba(107,140,255,0.1);
+      border-color: rgba(107,140,255,0.25);
+    }
+
+    .lb-row:hover::before { background: linear-gradient(180deg, var(--blue), var(--pink)); }
+
+    /* Top 3 accent rows */
+    .lb-row.rank-1 { border-color: rgba(245,200,66,0.4); background: linear-gradient(135deg, rgba(245,200,66,0.04), #fff); }
+    .lb-row.rank-2 { border-color: rgba(176,190,197,0.4); background: linear-gradient(135deg, rgba(176,190,197,0.04), #fff); }
+    .lb-row.rank-3 { border-color: rgba(205,127,50,0.4); background: linear-gradient(135deg, rgba(205,127,50,0.04), #fff); }
+
+    .lb-row.rank-1::before { background: var(--gold); }
+    .lb-row.rank-2::before { background: var(--silver); }
+    .lb-row.rank-3::before { background: var(--bronze); }
+
+    /* Rank cell */
+    .rank-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .rank-num {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1;
+    }
+
+    .rank-1 .rank-num { color: var(--gold); }
+    .rank-2 .rank-num { color: var(--silver); }
+    .rank-3 .rank-num { color: var(--bronze); }
+
+    .rank-medal {
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    /* User info cell */
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .user-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .av-blue   { background: linear-gradient(135deg, #6b8cff, #a78bff); }
+    .av-pink   { background: linear-gradient(135deg, #ff6b9d, #ff8c42); }
+    .av-green  { background: linear-gradient(135deg, #3ecf8e, #6b8cff); }
+    .av-purple { background: linear-gradient(135deg, #a78bff, #ff6b9d); }
+    .av-teal   { background: linear-gradient(135deg, #3ecf8e, #00c9b1); }
+    .av-orange { background: linear-gradient(135deg, #ff8c42, #f5c842); }
+    .av-navy   { background: linear-gradient(135deg, #4a6cf7, #6b8cff); }
+    .av-red    { background: linear-gradient(135deg, #ff4757, #ff6b9d); }
+
+    .user-info { min-width: 0; flex: 1; }
+
+    .user-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 6px;
+    }
+
+    .skills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .skill-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.3px;
+    }
+
+    .st-blue   { background: rgba(107,140,255,0.1); border: 1px solid rgba(107,140,255,0.2); color: var(--blue); }
+    .st-pink   { background: rgba(255,107,157,0.08); border: 1px solid rgba(255,107,157,0.2); color: var(--pink); }
+    .st-green  { background: rgba(62,207,142,0.08); border: 1px solid rgba(62,207,142,0.2); color: var(--green); }
+    .st-purple { background: rgba(167,139,255,0.08); border: 1px solid rgba(167,139,255,0.2); color: var(--purple); }
+    .st-orange { background: rgba(255,140,66,0.08); border: 1px solid rgba(255,140,66,0.2); color: var(--orange); }
+
+    /* Points cell */
+    .points-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .points-value {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .points-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #bbb;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .delta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .delta-up   { background: rgba(62,207,142,0.1); color: var(--green); }
+    .delta-down { background: rgba(255,107,157,0.1); color: var(--pink); }
+    .delta-flat { background: rgba(170,170,170,0.1); color: #aaa; }
+
+    /* Hidden rows */
+    .lb-row[data-tab="friends"] { display: none; }
+
+    /* ── RIGHT SIDEBAR — MY RANKING ── */
+    .lb-sidebar {
+      position: sticky;
+      top: 88px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .my-rank-card {
+      background: var(--dark);
+      border-radius: 24px;
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 16px 48px rgba(13,13,20,0.25);
+    }
+
+    .my-rank-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.18;
+    }
+
+    .my-rank-blob.a { width: 200px; height: 200px; background: var(--blue); top: -60px; right: -40px; }
+    .my-rank-blob.b { width: 160px; height: 160px; background: var(--pink); bottom: -40px; left: -30px; }
+
+    .my-rank-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .my-rank-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 22px;
+    }
+
+    .my-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      border: 3px solid rgba(255,255,255,0.12);
+      box-shadow: 0 4px 20px rgba(107,140,255,0.4);
+    }
+
+    .my-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .my-handle {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 2px;
+    }
+
+    /* Rank display */
+    .my-rank-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 20px;
+    }
+
+    .my-stat-box {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+
+    .my-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .my-stat-value.grad {
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .my-stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Progress bar */
+    .my-progress-wrap {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 18px;
+    }
+
+    .my-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 8px;
+    }
+
+    .my-progress-label span:last-child { color: rgba(255,255,255,0.6); }
+
+    .my-progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .my-progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--pink));
+      animation: fillIn 1.2s ease forwards;
+    }
+
+    @keyframes fillIn {
+      from { width: 0; }
+    }
+
+    /* My skills */
+    .my-skills-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    .my-skills-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .my-skills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .my-skill-chip {
+      background: rgba(107,140,255,0.15);
+      border: 1px solid rgba(107,140,255,0.25);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 999px;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .my-skill-chip:hover {
+      background: rgba(107,140,255,0.28);
+      transform: scale(1.04);
+    }
+
+    .my-skill-chip.pink {
+      background: rgba(255,107,157,0.12);
+      border-color: rgba(255,107,157,0.25);
+      color: var(--pink);
+    }
+
+    .my-skill-chip.green {
+      background: rgba(62,207,142,0.12);
+      border-color: rgba(62,207,142,0.25);
+      color: var(--green);
+    }
+
+    /* Hint card */
+    .hint-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 20px 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+
+    .hint-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .hint-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+
+    .hint-item:last-child { margin-bottom: 0; }
+
+    .hint-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    /* Empty state */
+    .lb-empty {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .lb-empty svg { opacity: 0.2; }
+    .lb-empty p { font-size: 15px; color: #aaa; font-weight: 400; }
+
+    /* Top 3 podium */
+    .podium {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .podium-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      max-width: 140px;
+    }
+
+    .podium-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .podium-item.first .podium-avatar {
+      width: 64px;
+      height: 64px;
+      font-size: 22px;
+      box-shadow: 0 0 0 4px rgba(245,200,66,0.35), 0 8px 24px rgba(245,200,66,0.3);
+    }
+
+    .podium-crown {
+      position: absolute;
+      top: -18px;
+      font-size: 18px;
+      animation: float-crown 2.5s ease-in-out infinite;
+    }
+
+    @keyframes float-crown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .podium-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-align: center;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+
+    .podium-pts {
+      font-size: 12px;
+      color: #888;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .podium-bar {
+      width: 100%;
+      border-radius: 10px 10px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 10px 0;
+      color: #fff;
+    }
+
+    .podium-item.first  .podium-bar { height: 80px; background: linear-gradient(180deg, #f5c842, #e0a800); }
+    .podium-item.second .podium-bar { height: 56px; background: linear-gradient(180deg, #b0bec5, #90a4ae); }
+    .podium-item.third  .podium-bar { height: 44px; background: linear-gradient(180deg, #cd7f32, #a0522d); }
+
+    /* Section divider */
+    .list-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaa;
+      padding: 4px 0 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .lb-layout {
+        grid-template-columns: 1fr;
+      }
+      .lb-sidebar {
+        position: static;
+        order: -1;
+      }
+      .my-rank-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .podium { display: none; }
+      .my-rank-grid { grid-template-columns: 1fr 1fr; }
+      .lb-controls { flex-direction: column; }
+    }
+  </style>
+  <link rel="stylesheet" href="dark-mode.css">
+  <script src="dark-mode.js"></script>
+</head>
+
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a class="logo" href="index.html">HyperSpace</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="workshop_detail.html">Events</a>
+    <a href="leaderboard.html" class="active">Leaderboard</a>
+    <a href="profile.html">Profile</a>
+    <a href="authentication.html" class="nav-cta" id="nav-join">Sign In</a>
+
+    <!-- Profile button (shown when logged in) -->
+    <div class="profile-btn" id="profile-btn" onclick="toggleProfileMenu(event)" role="button" tabindex="0">
+      <div class="profile-avatar" id="profile-initials">?</div>
+      <div class="profile-dropdown" id="profile-dropdown">
+        <div class="pd-info">
+          <div class="pd-name" id="pd-name">—</div>
+          <div class="pd-role" id="pd-role">—</div>
+        </div>
+        <a href="profile.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="eventregistration.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          All Events
+        </a>
+        <a href="leaderboard.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Leaderboard
+        </a>
+                <div class="pd-item" onclick="toggleDarkMode()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark Mode
+        </div>
+        <div class="pd-item danger" onclick="signOut()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ── HERO BANNER ── -->
+<div class="lb-hero">
+  <div class="lb-hero-blob a"></div>
+  <div class="lb-hero-blob b"></div>
+  <div class="lb-hero-blob c"></div>
+  <div class="lb-hero-inner">
+    <div class="lb-badge">🏆 Contest Rankings</div>
+    <h1>The <span>Leaderboard</span></h1>
+    <p>Rankings based on cumulative contest ratings. Earn points by participating in events, winning competitions, and contributing to the community.</p>
+  </div>
+</div>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="lb-layout">
+
+  <!-- LEFT — leaderboard list -->
+  <div class="lb-main">
+
+    <!-- Tabs -->
+    <div class="lb-tabs" role="tablist">
+      <button class="lb-tab active" id="tab-global" role="tab" aria-selected="true" onclick="switchTab('global')">
+        🌍 Global <span class="tab-count" id="global-count">24</span>
+      </button>
+      <button class="lb-tab" id="tab-friends" role="tab" aria-selected="false" onclick="switchTab('friends')">
+        👥 Friends <span class="tab-count" id="friends-count">6</span>
+      </button>
+    </div>
+
+    <!-- Controls -->
+    <div class="lb-controls">
+      <div class="lb-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="lb-search-input" placeholder="Search by name or skill…" oninput="filterRows()" aria-label="Search leaderboard">
+      </div>
+      <select class="lb-filter" id="lb-skill-filter" onchange="filterRows()" aria-label="Filter by skill">
+        <option value="">All Skills</option>
+        <option value="Machine Learning">Machine Learning</option>
+        <option value="Cybersecurity">Cybersecurity</option>
+        <option value="Python">Python</option>
+        <option value="CTF">CTF</option>
+        <option value="Web Dev">Web Dev</option>
+        <option value="NLP">NLP</option>
+        <option value="Pentesting">Pentesting</option>
+        <option value="Data Science">Data Science</option>
+      </select>
+    </div>
+
+    <!-- Podium (Top 3) — visible only in global tab -->
+    <div class="podium" id="podium-section">
+      <!-- 2nd -->
+      <div class="podium-item second">
+        <div class="podium-avatar av-green">PK</div>
+        <div class="podium-name">Priya K.</div>
+        <div class="podium-pts">3,840 pts</div>
+        <div class="podium-bar">2</div>
+      </div>
+      <!-- 1st -->
+      <div class="podium-item first">
+        <div class="podium-avatar av-blue" style="position:relative;">
+          <span class="podium-crown">👑</span>
+          AR
+        </div>
+        <div class="podium-name">Arjun R.</div>
+        <div class="podium-pts">4,210 pts</div>
+        <div class="podium-bar">1</div>
+      </div>
+      <!-- 3rd -->
+      <div class="podium-item third">
+        <div class="podium-avatar av-purple">SM</div>
+        <div class="podium-name">Sneha M.</div>
+        <div class="podium-pts">3,560 pts</div>
+        <div class="podium-bar">3</div>
+      </div>
+    </div>
+
+    <!-- List header -->
+    <div class="lb-header-row">
+      <span>Rank</span>
+      <span>Member &amp; Skills</span>
+      <span>Points</span>
+    </div>
+
+    <!-- Leaderboard rows -->
+    <div class="lb-list" id="lb-list" role="list">
+
+      <!-- GLOBAL rows (1–12) -->
+      <div class="lb-row rank-1" data-tab="global" data-name="Arjun R." data-skills="Machine Learning Python NLP" role="listitem">
+        <div class="rank-cell">
+          <div class="rank-num">1</div>
+          <div class="rank-medal">🥇</div>
+        </div>
+        <div class="user-cell">
+          <div class="user-avatar av-blue">AR</div>
+          <div class="user-info">
+            <div class="user-name">Arjun Ramachandran</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Machine Learning</span>
+              <span class="skill-tag st-purple">Python</span>
+              <span class="skill-tag st-pink">NLP</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">4,210</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 120</span>
+        </div>
+      </div>
+
+      <div class="lb-row rank-2" data-tab="global" data-name="Priya K." data-skills="Data Science Python Machine Learning" role="listitem">
+        <div class="rank-cell">
+          <div class="rank-num">2</div>
+          <div class="rank-medal">🥈</div>
+        </div>
+        <div class="user-cell">
+          <div class="user-avatar av-green">PK</div>
+          <div class="user-info">
+            <div class="user-name">Priya Krishnamurthy</div>
+            <div class="skills-row">
+              <span class="skill-tag st-green">Data Science</span>
+              <span class="skill-tag st-purple">Python</span>
+              <span class="skill-tag st-blue">Machine Learning</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">3,840</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 85</span>
+        </div>
+      </div>
+
+      <div class="lb-row rank-3" data-tab="global" data-name="Sneha M." data-skills="Cybersecurity CTF Pentesting" role="listitem">
+        <div class="rank-cell">
+          <div class="rank-num">3</div>
+          <div class="rank-medal">🥉</div>
+        </div>
+        <div class="user-cell">
+          <div class="user-avatar av-purple">SM</div>
+          <div class="user-info">
+            <div class="user-name">Sneha Mehta</div>
+            <div class="skills-row">
+              <span class="skill-tag st-pink">Cybersecurity</span>
+              <span class="skill-tag st-orange">CTF</span>
+              <span class="skill-tag st-green">Pentesting</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">3,560</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 40</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="global" data-name="Rohit S." data-skills="Web Dev Python" role="listitem">
+        <div class="rank-cell"><div class="rank-num">4</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-teal">RS</div>
+          <div class="user-info">
+            <div class="user-name">Rohit Sharma</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Web Dev</span>
+              <span class="skill-tag st-purple">Python</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">3,210</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-flat">— 0</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="global" data-name="Isha P." data-skills="Cybersecurity CTF" role="listitem">
+        <div class="rank-cell"><div class="rank-num">5</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-pink">IP</div>
+          <div class="user-info">
+            <div class="user-name">Isha Patel</div>
+            <div class="skills-row">
+              <span class="skill-tag st-pink">Cybersecurity</span>
+              <span class="skill-tag st-orange">CTF</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,980</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 30</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="global" data-name="Vikram N." data-skills="Machine Learning Data Science NLP" role="listitem">
+        <div class="rank-cell"><div class="rank-num">6</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-orange">VN</div>
+          <div class="user-info">
+            <div class="user-name">Vikram Nair</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Machine Learning</span>
+              <span class="skill-tag st-green">Data Science</span>
+              <span class="skill-tag st-pink">NLP</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,760</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-down">▼ 20</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="global" data-name="Anika T." data-skills="Web Dev" role="listitem">
+        <div class="rank-cell"><div class="rank-num">7</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-purple">AT</div>
+          <div class="user-info">
+            <div class="user-name">Anika Thomas</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Web Dev</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,510</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 55</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="global" data-name="Dev K." data-skills="Pentesting Cybersecurity CTF" role="listitem">
+        <div class="rank-cell"><div class="rank-num">8</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-navy">DK</div>
+          <div class="user-info">
+            <div class="user-name">Dev Kumar</div>
+            <div class="skills-row">
+              <span class="skill-tag st-green">Pentesting</span>
+              <span class="skill-tag st-pink">Cybersecurity</span>
+              <span class="skill-tag st-orange">CTF</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,340</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-down">▼ 10</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="global" data-name="Meera B." data-skills="Python Data Science" role="listitem">
+        <div class="rank-cell"><div class="rank-num">9</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-blue">MB</div>
+          <div class="user-info">
+            <div class="user-name">Meera Balasubramaniam</div>
+            <div class="skills-row">
+              <span class="skill-tag st-purple">Python</span>
+              <span class="skill-tag st-green">Data Science</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,190</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-flat">— 0</span>
+        </div>
+      </div>
+
+      <!-- ★ YOU — rank 10 ★ (highlighted in the list too) -->
+      <div class="lb-row" id="my-row" data-tab="global" data-name="You" data-skills="Machine Learning Python Web Dev" role="listitem"
+          style="border-color:rgba(107,140,255,0.4);background:linear-gradient(135deg,rgba(107,140,255,0.06),#fff);">
+        <div class="rank-cell"><div class="rank-num" style="color:var(--blue);">10</div></div>
+        <div class="user-cell">
+          <div class="user-avatar" id="my-row-avatar" style="background:linear-gradient(135deg,var(--blue),var(--pink));">?</div>
+          <div class="user-info">
+            <div class="user-name" id="my-row-name" style="color:var(--blue);">You <span style="background:rgba(107,140,255,0.1);border:1px solid rgba(107,140,255,0.25);color:var(--blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;">YOU</span></div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Machine Learning</span>
+              <span class="skill-tag st-purple">Python</span>
+              <span class="skill-tag st-blue">Web Dev</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,050</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 70</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="global" data-name="Kiran J." data-skills="Machine Learning NLP" role="listitem">
+        <div class="rank-cell"><div class="rank-num">11</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-red">KJ</div>
+          <div class="user-info">
+            <div class="user-name">Kiran Joshi</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Machine Learning</span>
+              <span class="skill-tag st-pink">NLP</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">1,890</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 15</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="global" data-name="Sara A." data-skills="Web Dev Cybersecurity" role="listitem">
+        <div class="rank-cell"><div class="rank-num">12</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-teal">SA</div>
+          <div class="user-info">
+            <div class="user-name">Sara Agarwal</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Web Dev</span>
+              <span class="skill-tag st-pink">Cybersecurity</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">1,740</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-down">▼ 5</span>
+        </div>
+      </div>
+
+      <!-- FRIENDS rows (only shown in friends tab) -->
+      <div class="lb-row" data-tab="friends" data-name="Priya K." data-skills="Data Science Python Machine Learning" role="listitem">
+        <div class="rank-cell"><div class="rank-num">1</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-green">PK</div>
+          <div class="user-info">
+            <div class="user-name">Priya Krishnamurthy</div>
+            <div class="skills-row">
+              <span class="skill-tag st-green">Data Science</span>
+              <span class="skill-tag st-purple">Python</span>
+              <span class="skill-tag st-blue">Machine Learning</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">3,840</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 85</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="friends" data-name="Dev K." data-skills="Pentesting Cybersecurity CTF" role="listitem">
+        <div class="rank-cell"><div class="rank-num">2</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-navy">DK</div>
+          <div class="user-info">
+            <div class="user-name">Dev Kumar</div>
+            <div class="skills-row">
+              <span class="skill-tag st-green">Pentesting</span>
+              <span class="skill-tag st-pink">Cybersecurity</span>
+              <span class="skill-tag st-orange">CTF</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,340</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-down">▼ 10</span>
+        </div>
+      </div>
+
+      <!-- YOU in friends -->
+      <div class="lb-row" data-tab="friends" data-name="You" data-skills="Machine Learning Python Web Dev" role="listitem"
+          style="border-color:rgba(107,140,255,0.4);background:linear-gradient(135deg,rgba(107,140,255,0.06),#fff);">
+        <div class="rank-cell"><div class="rank-num" style="color:var(--blue);">3</div></div>
+        <div class="user-cell">
+          <div class="user-avatar" id="my-row-avatar-f" style="background:linear-gradient(135deg,var(--blue),var(--pink));">?</div>
+          <div class="user-info">
+            <div class="user-name" id="my-row-name-f" style="color:var(--blue);">You <span style="background:rgba(107,140,255,0.1);border:1px solid rgba(107,140,255,0.25);color:var(--blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;">YOU</span></div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Machine Learning</span>
+              <span class="skill-tag st-purple">Python</span>
+              <span class="skill-tag st-blue">Web Dev</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,050</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 70</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="friends" data-name="Anika T." data-skills="Web Dev" role="listitem">
+        <div class="rank-cell"><div class="rank-num">4</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-purple">AT</div>
+          <div class="user-info">
+            <div class="user-name">Anika Thomas</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Web Dev</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">2,510</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 55</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="friends" data-name="Sara A." data-skills="Web Dev Cybersecurity" role="listitem">
+        <div class="rank-cell"><div class="rank-num">5</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-teal">SA</div>
+          <div class="user-info">
+            <div class="user-name">Sara Agarwal</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Web Dev</span>
+              <span class="skill-tag st-pink">Cybersecurity</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">1,740</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-down">▼ 5</span>
+        </div>
+      </div>
+
+      <div class="lb-row" data-tab="friends" data-name="Kiran J." data-skills="Machine Learning NLP" role="listitem">
+        <div class="rank-cell"><div class="rank-num">6</div></div>
+        <div class="user-cell">
+          <div class="user-avatar av-red">KJ</div>
+          <div class="user-info">
+            <div class="user-name">Kiran Joshi</div>
+            <div class="skills-row">
+              <span class="skill-tag st-blue">Machine Learning</span>
+              <span class="skill-tag st-pink">NLP</span>
+            </div>
+          </div>
+        </div>
+        <div class="points-cell">
+          <div class="points-value">1,890</div>
+          <div class="points-label">pts</div>
+          <span class="delta-badge delta-up">▲ 15</span>
+        </div>
+      </div>
+
+    </div><!-- /lb-list -->
+
+    <!-- Empty state -->
+    <div class="lb-empty" id="lb-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <p>No results match your search.</p>
+    </div>
+
+  </div><!-- /lb-main -->
+
+  <!-- RIGHT — My Ranking -->
+  <div class="lb-sidebar">
+
+    <!-- My Ranking Card -->
+    <div class="my-rank-card">
+      <div class="my-rank-blob a"></div>
+      <div class="my-rank-blob b"></div>
+      <div class="my-rank-label">⚡ Your Ranking</div>
+
+      <div class="my-rank-header">
+        <div class="my-avatar" id="my-avatar-initials">?</div>
+        <div>
+          <div class="my-name" id="my-rank-name">—</div>
+          <div class="my-handle" id="my-rank-handle">—</div>
+        </div>
+      </div>
+
+      <div class="my-rank-grid">
+        <div class="my-stat-box">
+          <div class="my-stat-value grad">#10</div>
+          <div class="my-stat-label">Global</div>
+        </div>
+        <div class="my-stat-box">
+          <div class="my-stat-value grad">#3</div>
+          <div class="my-stat-label">Friends</div>
+        </div>
+        <div class="my-stat-box">
+          <div class="my-stat-value">2,050</div>
+          <div class="my-stat-label">Points</div>
+        </div>
+        <div class="my-stat-box">
+          <div class="my-stat-value" style="color:var(--green);font-size:18px;">▲ 70</div>
+          <div class="my-stat-label">This Week</div>
+        </div>
+      </div>
+
+      <!-- Progress to next rank -->
+      <div class="my-progress-wrap">
+        <div class="my-progress-label">
+          <span>Progress to Rank #9</span>
+          <span>2,050 / 2,190</span>
+        </div>
+        <div class="my-progress-track">
+          <div class="my-progress-fill" style="width: 93.6%;"></div>
+        </div>
+      </div>
+
+      <!-- My Skills -->
+      <div class="my-skills-wrap">
+        <div class="my-skills-label">Your Skills</div>
+        <div class="my-skills-row">
+          <span class="my-skill-chip">Machine Learning</span>
+          <span class="my-skill-chip pink">Python</span>
+          <span class="my-skill-chip green">Web Dev</span>
+          <span class="my-skill-chip">NLP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hints card -->
+    <div class="hint-card">
+      <h4>💡 How to Earn Points</h4>
+      <div class="hint-item">
+        <span class="hint-dot"></span>
+        <span>Participate in CTF competitions and AI challenges</span>
+      </div>
+      <div class="hint-item">
+        <span class="hint-dot"></span>
+        <span>Complete workshops and earn attendance points</span>
+      </div>
+      <div class="hint-item">
+        <span class="hint-dot"></span>
+        <span>Win or place in the top 3 of any contest for bonus multipliers</span>
+      </div>
+      <div class="hint-item">
+        <span class="hint-dot"></span>
+        <span>Contribute knowledge articles to the community wiki</span>
+      </div>
+    </div>
+
+  </div><!-- /lb-sidebar -->
+
+</div><!-- /lb-layout -->
+
+<!-- ── FOOTER ── -->
+<footer style="background:var(--dark);color:rgba(255,255,255,0.4);padding:48px 8%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:13px;">
+  <div>
+    <div style="font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--blue),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;">HyperSpace</div>
+    <div>© 2025 HyperSpace. All rights reserved.</div>
+  </div>
+  <div style="display:flex;gap:24px;flex-wrap:wrap;">
+    <a href="index.html" style="color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;">Home</a>
+    <a href="workshop_detail.html" style="color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;">Events</a>
+    <a href="profile.html" style="color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;">Profile</a>
+  </div>
+</footer>
+
+<script>
+  // ── SESSION-AWARE NAV + MY RANKING CARD ──
+  (function () {
+    const raw = localStorage.getItem('hs_user') || sessionStorage.getItem('hs_user');
+
+    // ── My Ranking sidebar defaults (shown even when logged out) ──
+    const sidebarName    = document.getElementById('my-rank-name');
+    const sidebarHandle  = document.getElementById('my-rank-handle');
+    const sidebarInitials = document.getElementById('my-avatar-initials');
+
+    if (!raw) {
+      // Not logged in — show a generic placeholder
+      sidebarName.textContent    = 'Guest';
+      sidebarHandle.textContent  = 'Sign in to see your rank';
+      sidebarInitials.textContent = '?';
+      return;
+    }
+
+    try {
+      const user = JSON.parse(raw);
+
+      // Nav: hide Sign In, show profile avatar
+      document.getElementById('nav-join').style.display = 'none';
+      const btn = document.getElementById('profile-btn');
+      btn.style.display = 'flex';
+      const initials = user.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+      document.getElementById('profile-initials').textContent = initials;
+      document.getElementById('pd-name').textContent = user.name;
+      document.getElementById('pd-role').textContent = user.role;
+
+      // My Ranking sidebar card
+      sidebarInitials.textContent = initials;
+      sidebarName.textContent     = user.name;
+      const handle = '@' + user.name.split(' ')[0].toLowerCase() + ' · ' + (user.role || 'Member');
+      sidebarHandle.textContent   = handle;
+
+      // "You" rows in the list (global + friends) — update avatar initials and display name
+      const youLabel = `<span style="background:rgba(107,140,255,0.1);border:1px solid rgba(107,140,255,0.25);color:var(--blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;">YOU</span>`;
+
+      const rowAvatar = document.getElementById('my-row-avatar');
+      const rowName   = document.getElementById('my-row-name');
+      if (rowAvatar) rowAvatar.textContent = initials;
+      if (rowName)   rowName.innerHTML = user.name + ' ' + youLabel;
+
+      const rowAvatarF = document.getElementById('my-row-avatar-f');
+      const rowNameF   = document.getElementById('my-row-name-f');
+      if (rowAvatarF) rowAvatarF.textContent = initials;
+      if (rowNameF)   rowNameF.innerHTML = user.name + ' ' + youLabel;
+
+      // Also update data-name attributes for the search filter
+      document.querySelectorAll('[id^="my-row"]').forEach(row => {
+        if (row.dataset) row.dataset.name = user.name;
+      });
+    } catch (e) { /* corrupt session */ }
+  })();
+
+  function toggleProfileMenu(e) {
+    e.stopPropagation();
+    document.getElementById('profile-btn').classList.toggle('open');
+  }
+
+  document.addEventListener('click', function () {
+    document.getElementById('profile-btn')?.classList.remove('open');
+  });
+
+  function signOut() {
+    localStorage.removeItem('hs_user');
+    sessionStorage.removeItem('hs_user');
+    window.location.href = 'authentication.html';
+  }
+
+  // ── TAB SWITCHING ──
+  let currentTab = 'global';
+
+  function switchTab(tab) {
+    currentTab = tab;
+
+    // Button states
+    document.getElementById('tab-global').classList.toggle('active', tab === 'global');
+    document.getElementById('tab-friends').classList.toggle('active', tab === 'friends');
+
+    // Podium visibility
+    document.getElementById('podium-section').style.display = (tab === 'global') ? 'flex' : 'none';
+
+    // Update my-rank-card rank labels
+    const globalRankEl = document.querySelector('.my-rank-grid .my-stat-box:nth-child(1) .my-stat-value');
+    const friendRankEl = document.querySelector('.my-rank-grid .my-stat-box:nth-child(2) .my-stat-value');
+
+    // Filter rows
+    filterRows();
+  }
+
+  // ── SEARCH + SKILL FILTER ──
+  function filterRows() {
+    const query = document.getElementById('lb-search-input').value.toLowerCase().trim();
+    const skill  = document.getElementById('lb-skill-filter').value.toLowerCase();
+    const rows   = document.querySelectorAll('.lb-row');
+    let visible  = 0;
+
+    rows.forEach(row => {
+      const tabMatch   = row.dataset.tab === currentTab;
+      const nameMatch  = !query || row.dataset.name.toLowerCase().includes(query) || row.dataset.skills.toLowerCase().includes(query);
+      const skillMatch = !skill || row.dataset.skills.toLowerCase().includes(skill);
+
+      const show = tabMatch && nameMatch && skillMatch;
+      row.style.display = show ? 'grid' : 'none';
+      if (show) visible++;
+    });
+
+    // Empty state
+    const empty = document.getElementById('lb-empty');
+    empty.style.display = visible === 0 ? 'flex' : 'none';
+
+    // Renumber visible ranks (skip for global with podium on first load)
+    let rank = 1;
+    rows.forEach(row => {
+      if (row.style.display !== 'none') {
+        const numEl = row.querySelector('.rank-num');
+        if (numEl && (query || skill)) numEl.textContent = rank++;
+      }
+    });
+  }
+
+  // Initial render
+  switchTab('global');
+</script>
+
+</body>
+</html>

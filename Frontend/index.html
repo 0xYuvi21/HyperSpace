@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HyperSpace — The unified digital platform for student communities focused on AI and Cybersecurity. Manage events, teams, leaderboards, and knowledge sharing in one place." />
+  <title>HyperSpace — AI × Cyber Student Community</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue: #6b8cff;
+      --pink: #ff6b9d;
+      --dark: #0d0d14;
+      --light-bg: #ffffff;
+      --card-bg: #ffffff;
+      --text-main: #111;
+      --text-sub: #555;
+      --accent: #6b8cff;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+            font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    header {
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248,249,251,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #444;
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 24px;
+      white-space: nowrap;
+      transition: color 0.25s;
+    }
+
+    nav a:hover { color: var(--blue); }
+
+    .nav-cta {
+      background: var(--dark);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 14px !important;
+      transition: background 0.25s !important;
+    }
+
+    .nav-cta:hover { background: var(--blue) !important; }
+
+    /* ── PROFILE AVATAR ── */
+    .profile-btn {
+      display: none;           /* hidden until session found */
+      align-items: center;
+      gap: 8px;
+      margin-left: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      font-family: inherit;
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      transition: box-shadow 0.25s, transform 0.2s;
+    }
+
+    .profile-btn:hover .profile-avatar {
+      box-shadow: 0 0 0 3px rgba(107,140,255,0.35);
+      transform: scale(1.06);
+    }
+
+    /* Dropdown */
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      min-width: 200px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+      padding: 8px;
+      z-index: 200;
+      animation: dropIn 0.18s ease;
+    }
+
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-btn.open .profile-dropdown { display: block; }
+
+    .pd-info {
+      padding: 10px 12px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 6px;
+    }
+
+    .pd-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111;
+    }
+
+    .pd-role {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .pd-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .pd-item:hover { background: var(--light-bg); color: var(--blue); }
+
+    .pd-item.danger { color: #e85555; }
+    .pd-item.danger:hover { background: rgba(232,85,85,0.06); color: #e85555; }
+
+    /* ── HERO ── */
+    .hero {
+      height: calc(100vh - 68px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: visible;
+      padding: 0 8%;
+    }
+
+    /* Particle canvas sits behind everything */
+    #particle-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    /* All hero direct children sit above canvas */
+    .hero > *:not(#particle-canvas) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(107,140,255,0.1);
+      border: 1px solid rgba(107,140,255,0.3);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 999px;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    .hero h1 {
+      font-size: clamp(72px, 13vw, 185px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -3px;
+      color: #0d0d14;
+      white-space: nowrap;
+      margin-left: -1vw;
+      margin-right: -1vw;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 span {
+      font-weight: 300;
+      color: #666;
+    }
+
+    .hero-sub {
+      margin-top: 22px;
+      font-size: clamp(15px, 1.8vw, 19px);
+      font-weight: 400;
+      color: #555;
+      max-width: 620px;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      margin-top: 36px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--dark);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.25s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--blue);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--dark);
+      padding: 14px 32px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid #5d5d5d;
+      transition: border-color 0.25s, color 0.25s, transform 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+      transform: translateY(-2px);
+    }
+
+    /* Blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.12;
+      z-index: -1;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .blob.one { width: 450px; height: 450px; background: var(--blue); top: -5%; right: -5%; }
+    .blob.two { width: 350px; height: 350px; background: var(--pink); bottom: 5%; left: -5%; animation-delay: -4s; }
+    .blob.three { width: 300px; height: 300px; background: #a78bff; top: 40%; right: 20%; animation-delay: -2s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-20px) scale(1.04); }
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue), var(--pink));
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      padding: 100px 8%;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      max-width: 700px;
+    }
+
+    .section-desc {
+      margin-top: 18px;
+      font-size: 17px;
+      color: var(--text-sub);
+      max-width: 650px;
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── MOTIVE SECTION ── */
+    #motive {
+      background: var(--dark);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #motive .section-label { color: var(--pink); }
+
+    #motive .section-title { color: #fff; max-width: 800px; }
+
+    #motive .section-desc { color: rgba(255,255,255,0.6); max-width: 700px; }
+
+    .motive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 60px;
+    }
+
+    .motive-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 36px 28px;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .motive-card:hover {
+      background: rgba(107,140,255,0.1);
+      transform: translateY(-6px);
+    }
+
+    .motive-icon {
+      font-size: 32px;
+      margin-bottom: 18px;
+    }
+
+    .motive-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .motive-card p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* Dark blob */
+    #motive .dark-blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: var(--blue);
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.06;
+      top: -100px;
+      right: -100px;
+      z-index: 0;
+    }
+
+    #motive > * { position: relative; z-index: 1; }
+
+    /* ── STATS ── */
+    #stats {
+      background: #fff;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      padding: 80px 8%;
+    }
+
+    .stats-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 32px;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 32px 20px;
+      border-radius: 20px;
+      background: var(--light-bg);
+      border: 1px solid #eee;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(107,140,255,0.12);
+    }
+
+    .stat-number {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .stat-suffix {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #888;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── PILLARS ── */
+    #pillars { background: var(--light-bg); }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 60px;
+    }
+
+    .pillar-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .pillar-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue), var(--pink));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s;
+    }
+
+    .pillar-card:hover::before { transform: scaleX(1); }
+
+    .pillar-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    }
+
+    /* ── PLATFORM FLEX BOX ── */
+    #pillars .platform-flex {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    #pillars .platform-left {
+      flex: 1;
+      max-width: 600px;
+    }
+
+    #pillars .platform-right {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    #pillars .platform-right img {
+      width: 100%;
+      border-radius: 16px;
+      max-width: 500px;
+      box-shadow: 0 24px 72px rgba(107, 140, 255, 0.15);
+      border: 1px solid rgba(107, 140, 255, 0.2);
+    }
+
+    @media (max-width: 900px) {
+      #pillars .platform-flex {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #pillars .platform-right {
+        justify-content: flex-start;
+        margin-top: 30px;
+      }
+    }
+
+    .pillar-num {
+      font-size: 48px;
+      font-weight: 700;
+      color: rgba(107,140,255,0.12);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .pillar-card h3 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .pillar-card p {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.7;
+    }
+
+    /* ── WHO IS IT FOR ── */
+    #audience {
+      background: #fff;
+      border-top: 1px solid #eee;
+    }
+
+    .audience-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      margin-top: 60px;
+    }
+
+    .audience-text h2 {
+      font-size: clamp(24px, 3.5vw, 40px);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 20px;
+    }
+
+    .audience-text p {
+      font-size: 15px;
+      color: var(--text-sub);
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .tag {
+      background: rgba(107,140,255,0.08);
+      border: 1px solid rgba(107,140,255,0.2);
+      color: var(--blue);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .audience-visual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .audience-box {
+      background: var(--dark);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .audience-box:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(107,140,255,0.18);
+    }
+
+    .audience-box img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+    }
+
+    .audience-box span {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      padding: 12px 0;
+    }
+
+    /* ── EVENTS PREVIEW ── */
+    #events {
+      background: var(--light-bg);
+      border-top: 1px solid #eee;
+    }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 60px;
+    }
+
+    .event-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .event-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+    }
+
+    .event-banner {
+      height: 8px;
+    }
+
+    .event-banner.ai   { background: linear-gradient(90deg, #6b8cff, #a78bff); }
+    .event-banner.ctf  { background: linear-gradient(90deg, #ff6b9d, #ff8c42); }
+    .event-banner.panel{ background: linear-gradient(90deg, #3ecf8e, #6b8cff); }
+
+    .event-body { padding: 28px 24px; }
+
+    .event-date {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+
+    .event-body h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .event-body p {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    .event-tag {
+      display: inline-block;
+      margin-top: 16px;
+      background: rgba(107,140,255,0.08);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    /* ── CTA BANNER ── */
+    #cta {
+      background: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 100px 8%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cta .cta-blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.08;
+    }
+
+    #cta .cta-blob.a { background: var(--blue); top: -150px; left: -100px; }
+    #cta .cta-blob.b { background: var(--pink); bottom: -150px; right: -100px; }
+
+    #cta h2 {
+      font-size: clamp(28px, 5vw, 56px);
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 700px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+
+    #cta p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.55);
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.65;
+      position: relative;
+    }
+
+    #cta .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      position: relative;
+      font-size: 16px;
+    }
+
+    #cta .btn-primary:hover { background: linear-gradient(135deg, var(--pink), var(--blue)); }
+
+    /* ── TICKER ── */
+    .ticker-wrapper {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #111;
+      color: #fff;
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 12px 0;
+      z-index: 99;
+    }
+
+    .ticker {
+      display: inline-block;
+      padding-left: 100%;
+      animation: ticker-scroll 25s linear infinite;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.4);
+      padding: 60px 8% 100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    footer .copy { font-size: 13px; }
+
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.25s;
+    }
+
+    .footer-links a:hover { color: #fff; }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── CHATBOT ── */
+    #chatbot-fab {
+      position: fixed;
+      bottom: 60px;
+      right: 30px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(107,140,255,0.3);
+      z-index: 1000;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    #chatbot-fab:hover {
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 12px 32px rgba(107,140,255,0.4);
+    }
+    #chatbot-fab svg {
+      width: 28px;
+      height: 28px;
+    }
+    
+    #chatbot-window {
+      position: fixed;
+      bottom: 130px;
+      right: 30px;
+      width: 340px;
+      max-width: calc(100vw - 40px);
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+      border: 1px solid #eee;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    }
+    #chatbot-window.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .chat-header {
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      color: #fff;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .chat-close {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .chat-close:hover { opacity: 1; }
+    
+    .chat-body {
+      padding: 20px;
+      height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--light-bg);
+    }
+    
+    .chat-msg {
+      max-width: 85%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .chat-msg.bot {
+      background: #fff;
+      border: 1px solid #eee;
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+    }
+    .chat-msg.user {
+      background: var(--dark);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      align-self: flex-end;
+    }
+    
+    .chat-input-area {
+      display: flex;
+      border-top: 1px solid #eee;
+      background: #fff;
+    }
+    .chat-input {
+      flex: 1;
+      border: none;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+    .chat-send {
+      background: none;
+      border: none;
+      padding: 0 16px;
+      color: var(--blue);
+      cursor: pointer;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .chat-send:hover { color: var(--pink); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .audience-inner { grid-template-columns: 1fr; }
+      .audience-visual { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      nav > a:not(.nav-cta) { display: none; }
+      .hero { padding-top: 60px; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+  <link rel="stylesheet" href="dark-mode.css">
+  <script src="dark-mode.js"></script>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a href="index.html" style="text-decoration: none;"><div class="logo">HyperSpace</div></a>
+  <nav>
+    <a href="#motive">Mission</a>
+    <a href="#stats">Impact</a>
+    <a href="#pillars">Platform</a>
+    <a href="#events">Events</a>
+    <a href="discussion.html" id="nav-discussion" style="display:none">Discussion</a>
+    <a href="signup.html" class="nav-cta" id="nav-join">Join Now</a>
+
+    <!-- Profile button (shown when logged in) -->
+    <div class="profile-btn" id="profile-btn" onclick="toggleProfileMenu(event)" role="button" tabindex="0">
+      <div class="profile-avatar" id="profile-initials">?</div>
+      <div class="profile-dropdown" id="profile-dropdown">
+        <div class="pd-info">
+          <div class="pd-name" id="pd-name">—</div>
+          <div class="pd-role" id="pd-role">—</div>
+        </div>
+        <a href="profile.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="eventregistration.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          All Events
+        </a>
+        <a href="leaderboard.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Leaderboard
+        </a>
+                <div class="pd-item" onclick="toggleDarkMode()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark Mode
+        </div>
+        <div class="pd-item danger" onclick="signOut()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <canvas id="particle-canvas"></canvas>
+
+  <h1 class="reveal">HyperSpace</h1>
+
+  <p class="hero-sub reveal">
+    The future of technology belongs to those who can build, secure, and lead.
+    HyperSpace is the unified digital platform student communities have been missing —
+    managing events, teams, leaderboards, and knowledge sharing, all in one place.
+  </p>
+
+  <div class="hero-actions reveal">
+    <a href="../signup.html" class="btn-primary" id="hero-join">Join the Community</a>
+    <a href="#motive" class="btn-secondary">Explore More ↓</a>
+  </div>
+</section>
+
+<!-- ── MOTIVE ── -->
+<section id="motive">
+  <div class="dark-blob"></div>
+
+  <div class="reveal">
+    <div class="section-label">Our Motive</div>
+    <h2 class="section-title">
+      Student communities are growing — but they lack the right infrastructure.
+    </h2>
+    <p class="section-desc">
+      AI and Cybersecurity student communities are popping up across colleges worldwide.
+      Yet most of them run on scattered group chats, spreadsheets, and guesswork.
+      HyperSpace was built to change that — giving every community a proper digital home.
+    </p>
+  </div>
+
+  <div class="motive-grid">
+    <div class="motive-card reveal">
+      <div class="motive-icon">
+        <!-- Target / Focused Learning -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#6b8cff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+          <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
+          <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
+        </svg>
+      </div>
+      <h3>Focused Learning</h3>
+      <p>Curated knowledge paths across AI engineering, offensive security, and cyber defense tailored for student learners.</p>
+    </div>
+    <div class="motive-card reveal">
+      <div class="motive-icon">
+        <!-- People / Collaborative Teams -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#6b8cff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <h3>Collaborative Teams</h3>
+      <p>Form squads, collaborate on projects, and compete in team challenges — all within a structured community space.</p>
+    </div>
+    <div class="motive-card reveal">
+      <div class="motive-icon">
+        <!-- Trophy / Merit-Based Recognition -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#6b8cff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="8 21 12 17 16 21"/>
+          <line x1="12" y1="17" x2="12" y2="11"/>
+          <path d="M7 4H4a2 2 0 0 0-2 2v1c0 3.31 2.69 6 6 6h8c3.31 0 6-2.69 6-6V6a2 2 0 0 0-2-2h-3"/>
+          <rect x="7" y="2" width="10" height="9" rx="2"/>
+        </svg>
+      </div>
+      <h3>Merit-Based Recognition</h3>
+      <p>Live leaderboards and achievement badges that reward real skill — not just attendance or seniority.</p>
+    </div>
+    <div class="motive-card reveal">
+      <div class="motive-icon">
+        <!-- Calendar / Structured Events -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#6b8cff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+          <line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/>
+          <line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/>
+        </svg>
+      </div>
+      <h3>Structured Events</h3>
+      <p>From CTF competitions to GenAI panels, plan and discover community events with a built-in event management system.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<section id="stats">
+  <div class="stats-header reveal">
+    <div class="section-label" style="text-align:center;">Community Impact</div>
+    <h2 class="section-title" style="text-align:center; margin:0 auto;">Growing Faster Than Ever</h2>
+    <p class="section-desc" style="text-align:center; margin:12px auto 0;">Real numbers from real builders and defenders around the world.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-item reveal">
+      <div class="stat-number">2<span class="stat-suffix">K+</span></div>
+      <div class="stat-label">Active Members</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number">48<span class="stat-suffix">+</span></div>
+      <div class="stat-label">Events Hosted</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number">15<span class="stat-suffix">+</span></div>
+      <div class="stat-label">Colleges &amp; Chapters</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number">300<span class="stat-suffix">+</span></div>
+      <div class="stat-label">CTF Challenges Solved</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="stat-number">90<span class="stat-suffix">%</span></div>
+      <div class="stat-label">Member Retention Rate</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PILLARS / PLATFORM ── -->
+<section id="pillars">
+  <div class="reveal platform-flex">
+    <div class="platform-left">
+      <div class="section-label">The Platform</div>
+      <h2 class="section-title">Everything a tech community needs. Finally, in one place.</h2>
+      <p class="section-desc">
+        HyperSpace is purpose-built for AI and Cybersecurity student communities —
+        replacing the chaos of DMs and docs with a proper digital backbone.
+      </p>
+    </div>
+    <div class="platform-right">
+      <img src="community.jpg" alt="Dynamic Tech Community Collaboration Illustration">
+    </div>
+  </div>
+
+  <div class="pillars-grid">
+    <div class="pillar-card reveal">
+      <div class="pillar-num">01</div>
+      <h3>Event Management</h3>
+      <p>Create, promote, and track community events — from workshops and hackathons to CTF competitions — with RSVPs, reminders, and recaps.</p>
+    </div>
+    <div class="pillar-card reveal">
+      <div class="pillar-num">02</div>
+      <h3>Team Formation</h3>
+      <p>Build project teams, assign roles, and track contributions. No more hunting through chats to find who's working on what.</p>
+    </div>
+    <div class="pillar-card reveal">
+      <div class="pillar-num">03</div>
+      <h3>Live Leaderboards</h3>
+      <p>Skill-based rankings that update in real time — motivating members with transparent, fair, and merit-driven recognition.</p>
+    </div>
+    <div class="pillar-card reveal">
+      <div class="pillar-num">04</div>
+      <h3>Knowledge Hub</h3>
+      <p>A shared repository for community writeups, resources, and learning paths — so knowledge doesn't get buried in chat history.</p>
+    </div>
+    <div class="pillar-card reveal">
+      <div class="pillar-num">05</div>
+      <h3>Community Feed</h3>
+      <p>A dedicated space to announce wins, share discoveries, and celebrate achievements across your chapter network.</p>
+    </div>
+    <div class="pillar-card reveal">
+      <div class="pillar-num">06</div>
+      <h3>Analytics Dashboard</h3>
+      <p>Track chapter health, engagement trends, and member growth — giving community leads the data they need to grow smarter.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── AUDIENCE ── -->
+<section id="audience">
+  <div class="reveal">
+    <div class="section-label">Who Is It For?</div>
+    <h2 class="section-title">Built for Student Builders &amp; Community Leaders</h2>
+  </div>
+
+  <div class="audience-inner">
+    <div class="audience-text reveal">
+      <h2>If you've ever run a tech club — you know the chaos.</h2>
+      <p>
+        Managing a student community is a second job. Tracking members, organizing events,
+        sharing resources, running competitions — all while keeping engagement alive.
+        HyperSpace takes that operational burden off your plate.
+      </p>
+      <p>
+        Whether you're a chapter president, a CTF team lead, or a curious student joining
+        your first AI or Cybersecurity club — HyperSpace is your home base.
+      </p>
+      <div class="tag-list">
+        <span class="tag">AI Enthusiasts</span>
+        <span class="tag">Cybersecurity Students</span>
+        <span class="tag">CTF Teams</span>
+        <span class="tag">Chapter Leaders</span>
+        <span class="tag">ML Researchers</span>
+        <span class="tag">Ethical Hackers</span>
+      </div>
+    </div>
+
+    <div class="audience-visual reveal">
+      <div class="audience-box">
+        <img src="ai_builders.png" alt="AI Builders" />
+        <span>AI Builders</span>
+      </div>
+      <div class="audience-box">
+        <img src="cyber_defenders.png" alt="Cyber Defenders" />
+        <span>Cyber Defenders</span>
+      </div>
+      <div class="audience-box">
+        <img src="ctf_players.png" alt="CTF Players" />
+        <span>CTF Players</span>
+      </div>
+      <div class="audience-box">
+        <img src="club_leaders.png" alt="Club Leaders" />
+        <span>Club Leaders</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EVENTS PREVIEW ── -->
+<section id="events">
+  <div class="reveal">
+    <div class="section-label">Upcoming Events</div>
+    <h2 class="section-title">What's Happening Next</h2>
+    <p class="section-desc">Stay ahead with workshops, competitions, and panels shaped around the cutting edge.</p>
+  </div>
+
+  <div class="events-grid">
+    <div class="event-card reveal">
+      <div class="event-banner ai"></div>
+      <div class="event-body">
+        <div class="event-date">March 12, 2026</div>
+        <h3>AI Threat Detection Workshop</h3>
+        <p>Hands-on session on building ML-powered intrusion detection systems from scratch. Live coding included.</p>
+        <span class="event-tag">Workshop · Live</span>
+      </div>
+    </div>
+    <div class="event-card reveal">
+      <div class="event-banner ctf"></div>
+      <div class="event-body">
+        <div class="event-date">March 20, 2026</div>
+        <h3>Capture The Flag — HyperSpace Edition</h3>
+        <p>Multi-domain CTF covering web exploitation, reverse engineering, forensics, and AI-based challenge categories.</p>
+        <span class="event-tag">Competition · Teams</span>
+      </div>
+    </div>
+    <div class="event-card reveal">
+      <div class="event-banner panel"></div>
+      <div class="event-body">
+        <div class="event-date">March 28, 2026</div>
+        <h3>GenAI in Cyber Panel Discussion</h3>
+        <p>Industry practitioners and researchers discuss how generative AI is reshaping both attack and defense landscapes.</p>
+        <span class="event-tag">Panel · Open</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top: 48px;">
+    <a href="eventregistration.html" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
+      Click for more Events
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta">
+  <div class="cta-blob a"></div>
+  <div class="cta-blob b"></div>
+
+  <h2 class="reveal">Ready to build the future — and secure it?</h2>
+  <p class="reveal">Join thousands of students already learning, competing, and leading inside HyperSpace.</p>
+  <a href="signup.html" class="btn-primary reveal">Get Early Access →</a>
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker-wrapper">
+  <div class="ticker">
+    🔴 Live: AI Threat Detection Workshop — March 12 &nbsp;|&nbsp; Capture The Flag Event — March 20 &nbsp;|&nbsp; GenAI in Cyber Panel Discussion — March 28 &nbsp;|&nbsp; HyperSpace Beta launching soon — Join the waitlist &nbsp;|&nbsp;
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div>
+    <div class="footer-logo">HyperSpace</div>
+    <div class="copy">© 2026 HyperSpace — AI × Cyber Student Community</div>
+  </div>
+  <div class="footer-links">
+    <a href="#motive">Mission</a>
+    <a href="#pillars">Platform</a>
+    <a href="#events">Events</a>
+    <a href="#">Contact</a>
+    <a href="#">Privacy</a>
+  </div>
+</footer>
+
+<!-- ── CHATBOT ── -->
+<div id="chatbot-fab" onclick="toggleChat()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</div>
+
+<div id="chatbot-window">
+  <div class="chat-header">
+    <div class="chat-header-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+      HyperBot
+    </div>
+    <button class="chat-close" onclick="toggleChat()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="chat-body" id="chat-body">
+    <div class="chat-msg bot">Hi! I'm HyperBot, your AI guide. Ask me about events, joining, or the platform!</div>
+  </div>
+  <form class="chat-input-area" id="chat-form">
+    <input type="text" id="chat-input" class="chat-input" placeholder="Ask a question..." autocomplete="off">
+    <button type="submit" class="chat-send">Send</button>
+  </form>
+</div>
+
+<!-- ── SCROLL REVEAL SCRIPT ── -->
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Animate stat counters
+  function animateCount(el, target, suffix) {
+    let start = 0;
+    const duration = 1800;
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const nums = entry.target.querySelectorAll('.stat-number');
+        const data = [
+          { val: 200, s: 'K+' },
+          { val: 48,   s: '+' },
+          { val: 15,   s: '+' },
+          { val: 300,  s: '+' },
+          { val: 90,   s: '%' },
+        ];
+        nums.forEach((el, i) => {
+          animateCount(el, data[i]?.val ?? 0, data[i]?.s ?? '');
+        });
+        statsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const statsGrid = document.querySelector('.stats-grid');
+  if (statsGrid) statsObserver.observe(statsGrid);
+
+  // ── SESSION-AWARE NAV ──
+  (function () {
+    const raw = localStorage.getItem('hs_user') || sessionStorage.getItem('hs_user');
+    if (!raw) return;  // not logged in — keep "Join Now"
+
+    try {
+      const user = JSON.parse(raw);
+
+      // Hide Join Now + hero CTA, show profile button + discussion link
+      document.getElementById('nav-join').style.display  = 'none';
+      const heroJoin = document.getElementById('hero-join');
+      if (heroJoin) heroJoin.style.display = 'none';
+      document.getElementById('nav-discussion').style.display = 'inline';
+      const btn = document.getElementById('profile-btn');
+      btn.style.display = 'flex';
+
+      // Set initials (first letter of each word, max 2)
+      const initials = user.name
+        .split(' ')
+        .map(w => w[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+      document.getElementById('profile-initials').textContent = initials;
+
+      // Fill dropdown info
+      document.getElementById('pd-name').textContent = user.name;
+      document.getElementById('pd-role').textContent = user.role;
+    } catch (e) { /* corrupt session — ignore */ }
+  })();
+
+  function toggleProfileMenu(e) {
+    e.stopPropagation();
+    document.getElementById('profile-btn').classList.toggle('open');
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function () {
+    document.getElementById('profile-btn')?.classList.remove('open');
+  });
+
+  function signOut() {
+    localStorage.removeItem('hs_user');
+    sessionStorage.removeItem('hs_user');
+    window.location.reload();
+  }
+
+  // ── NEURAL NETWORK BACKGROUND ──
+  const canvas = document.getElementById('particle-canvas');
+  const ctx    = canvas.getContext('2d');
+  const NODES  = 55;
+  const RANGE  = 180;  // max distance to draw a connection
+  let nodes    = [];
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+
+  function initNodes() {
+    nodes = [];
+    for (let i = 0; i < NODES; i++) {
+      nodes.push({
+        x:  Math.random() * canvas.width,
+        y:  Math.random() * canvas.height,
+        dx: (Math.random() - 0.5) * 0.55,
+        dy: (Math.random() - 0.5) * 0.55,
+        r:  Math.random() * 2.5 + 1.5,
+        pulse: Math.random() * Math.PI * 2   // phase offset for glow
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const t = Date.now() * 0.001;
+
+    // Draw edges first (under nodes)
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < RANGE) {
+          const alpha = (1 - dist / RANGE) * 0.28;
+          // Gradient line: blue → purple
+          const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+          grad.addColorStop(0, `rgba(107,140,255,${alpha})`);
+          grad.addColorStop(1, `rgba(167,139,250,${alpha})`);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes
+    nodes.forEach(n => {
+      const glow = 0.55 + 0.35 * Math.sin(t * 1.4 + n.pulse);
+      // Outer glow ring
+      const aura = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r * 5);
+      aura.addColorStop(0,   `rgba(107,140,255,${glow * 0.35})`);
+      aura.addColorStop(1,   `rgba(107,140,255,0)`);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r * 5, 0, Math.PI * 2);
+      ctx.fillStyle = aura;
+      ctx.fill();
+      // Core dot
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(107,140,255,${glow})`;
+      ctx.fill();
+      // Move
+      n.x += n.dx; n.y += n.dy;
+      if (n.x < 0 || n.x > canvas.width)  n.dx *= -1;
+      if (n.y < 0 || n.y > canvas.height) n.dy *= -1;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  resize(); initNodes(); draw();
+  window.addEventListener('resize', () => { resize(); initNodes(); });
+
+  // ── AI CHATBOT ──
+  const faqData = {
+    "events": "Check out our Events section! We have a Threat Detection Workshop, a CTF, and a GenAI Panel coming up soon.",
+    "workshop": "The AI Threat Detection Workshop is on March 12. You can register via the Events section!",
+    "ctf": "Our massive Capture The Flag event is on March 20! Form a team and get ready to hack.",
+    "join": "You can join our community by clicking 'Join Now' at the top, or by exploring the motive section to see if it's right for you.",
+    "who": "HyperSpace is built for AI enthusiasts, cybersecurity students, CTF players, and chapter leaders looking for a centralized hub.",
+    "platform": "The platform offers event management, team formation, live leaderboards, and a knowledge hub.",
+    "leaderboard": "The leaderboard is where you can see the top-ranked members based on CTF solves and community participation.",
+    "mission": "Our mission is to give tech communities proper digital infrastructure. No more scattered group chats!"
+  };
+
+  const chatWindow = document.getElementById('chatbot-window');
+  const chatBody = document.getElementById('chat-body');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  
+  function toggleChat() {
+    chatWindow.classList.toggle('open');
+    if (chatWindow.classList.contains('open')) {
+      chatInput.focus();
+    }
+  }
+
+  function appendChatMsg(text, sender) {
+    const msg = document.createElement('div');
+    msg.className = `chat-msg ${sender}`;
+    msg.textContent = text;
+    chatBody.appendChild(msg);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const query = chatInput.value.trim().toLowerCase();
+    if (!query) return;
+
+    appendChatMsg(chatInput.value.trim(), 'user');
+    chatInput.value = '';
+
+    // Show typing effect briefly
+    setTimeout(() => {
+      let response = "I'm HyperBot! You're personal helper. Try asking me about 'events', 'CTF', 'joining', or our 'mission'.";
+      
+      for (const [key, val] of Object.entries(faqData)) {
+        if (query.includes(key)) {
+          response = val;
+          break;
+        }
+      }
+      
+      appendChatMsg(response, 'bot');
+    }, 600);
+  });
+</script>
+
+</body>
+</html>  

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HyperSpace Events — Browse Hackathons, Workshops, CTF Challenges, and Conferences. Filter by Live, Upcoming, and Past events." />
+  <title>Events — HyperSpace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --blue: #6b8cff;
+      --pink: #ff6b9d;
+      --purple: #a78bff;
+      --green: #3ecf8e;
+      --orange: #ff8c42;
+      --dark: #0d0d14;
+      --light-bg: #f8f9fb;
+      --card-bg: #ffffff;
+      --text-main: #111;
+      --text-sub: #555;
+      --border: #eee;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; background: var(--light-bg); color: var(--text-main); overflow-x: hidden; }
+
+    /* ── NAV ── */
+    header {
+      padding: 18px 6%; display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: nowrap; gap: 16px; position: sticky; top: 0; z-index: 100;
+      background: rgba(248,249,251,0.94); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .logo {
+      font-weight: 700; font-size: 22px; letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      text-decoration: none;
+    }
+    nav { display: flex; align-items: center; gap: 0; }
+    nav a { text-decoration: none; color: #444; font-size: 14px; font-weight: 500; margin-left: 24px; white-space: nowrap; transition: color 0.25s; }
+    nav a:hover { color: var(--blue); }
+    .nav-cta { background: var(--dark); color: #fff !important; padding: 8px 20px; border-radius: 999px; font-size: 14px !important; transition: background 0.25s !important; }
+    .nav-cta:hover { background: var(--blue) !important; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      background: var(--dark); padding: 72px 8% 60px; position: relative; overflow: hidden;
+    }
+    .page-header .blob {
+      position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.09; pointer-events: none;
+    }
+    .page-header .blob.a { width: 500px; height: 500px; background: var(--blue); top: -120px; right: -80px; }
+    .page-header .blob.b { width: 350px; height: 350px; background: var(--pink); bottom: -100px; left: -60px; }
+    .page-header-inner { position: relative; z-index: 1; }
+    .page-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--pink); margin-bottom: 14px;
+    }
+    .page-title {
+      font-size: clamp(32px, 5vw, 60px); font-weight: 700; line-height: 1.1;
+      letter-spacing: -1.5px; color: #fff; margin-bottom: 16px;
+    }
+    .page-title span { background: linear-gradient(135deg,var(--blue),var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-subtitle { font-size: 17px; color: rgba(255,255,255,0.55); max-width: 560px; line-height: 1.65; font-weight: 300; }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: flex; gap: 32px; margin-top: 48px; flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 16px 24px; min-width: 120px;
+    }
+    .stat-chip .num { font-size: 26px; font-weight: 700; color: #fff; line-height: 1; }
+    .stat-chip .lbl { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; font-weight: 400; }
+
+    /* ── MAIN LAYOUT ── */
+    .events-layout {
+      display: grid; grid-template-columns: 260px 1fr; gap: 32px;
+      padding: 48px 8%; max-width: 1400px; margin: 0 auto;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar { position: sticky; top: 82px; height: fit-content; }
+    .sidebar-section { margin-bottom: 32px; }
+    .sidebar-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #999; margin-bottom: 12px; }
+
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 14px; border-radius: 10px; border: none; background: transparent;
+      font-family: inherit; font-size: 14px; font-weight: 500; color: #444;
+      cursor: pointer; transition: background 0.18s, color 0.18s; width: 100%; text-align: left;
+    }
+    .filter-btn:hover { background: rgba(107,140,255,0.08); color: var(--blue); }
+    .filter-btn.active { background: rgba(107,140,255,0.12); color: var(--blue); font-weight: 600; }
+    .filter-btn .count-badge {
+      background: #eee; color: #888; font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 999px; min-width: 24px; text-align: center;
+    }
+    .filter-btn.active .count-badge { background: rgba(107,140,255,0.2); color: var(--blue); }
+
+    /* Type filter buttons */
+    .type-filter-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 14px; border-radius: 10px; border: none; background: transparent;
+      font-family: inherit; font-size: 14px; font-weight: 500; color: #444;
+      cursor: pointer; transition: background 0.18s, color 0.18s; width: 100%; text-align: left;
+    }
+    .type-filter-btn:hover { background: rgba(107,140,255,0.07); color: var(--blue); }
+    .type-filter-btn.active { background: rgba(107,140,255,0.12); color: var(--blue); font-weight: 600; }
+    .type-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-hackathon { background: linear-gradient(135deg,#6b8cff,#a78bff); }
+    .dot-workshop  { background: linear-gradient(135deg,#3ecf8e,#6b8cff); }
+    .dot-ctf       { background: linear-gradient(135deg,#ff6b9d,#ff8c42); }
+    .dot-conference{ background: linear-gradient(135deg,#ff8c42,#f7ca18); }
+
+    /* ── MAIN CONTENT ── */
+
+    /* Search + sort bar */
+    .toolbar {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .search-wrap {
+      flex: 1; min-width: 200px; position: relative;
+    }
+    .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #aaa; pointer-events: none; }
+    .search-input {
+      width: 100%; padding: 11px 14px 11px 42px; border-radius: 12px;
+      border: 1px solid var(--border); background: #fff; font-family: inherit;
+      font-size: 14px; color: var(--text-main); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(107,140,255,0.12); }
+    .sort-select {
+      padding: 11px 16px; border-radius: 12px; border: 1px solid var(--border);
+      background: #fff; font-family: inherit; font-size: 14px; color: var(--text-main);
+      outline: none; cursor: pointer; transition: border-color 0.2s;
+    }
+    .sort-select:focus { border-color: var(--blue); }
+
+    .results-count { font-size: 13px; color: #999; margin-bottom: 20px; font-weight: 400; }
+    .results-count span { color: var(--blue); font-weight: 600; }
+
+    /* ── EVENT CARDS ── */
+    .events-grid { display: grid; gap: 20px; }
+
+    .event-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 20px;
+      overflow: hidden; cursor: pointer;
+      transition: transform 0.28s cubic-bezier(.22,.7,0,1), box-shadow 0.28s cubic-bezier(.22,.7,0,1), border-color 0.2s;
+      position: relative;
+    }
+    .event-card:hover {
+      transform: translateY(-4px) scale(1.005);
+      box-shadow: 0 16px 48px rgba(107,140,255,0.12);
+      border-color: rgba(107,140,255,0.25);
+    }
+
+    .card-accent { height: 4px; }
+    .accent-hackathon { background: linear-gradient(90deg,#6b8cff,#a78bff); }
+    .accent-workshop  { background: linear-gradient(90deg,#3ecf8e,#6b8cff); }
+    .accent-ctf       { background: linear-gradient(90deg,#ff6b9d,#ff8c42); }
+    .accent-conference{ background: linear-gradient(90deg,#ff8c42,#f7ca18); }
+
+    .card-body { padding: 28px 28px 24px; display: flex; gap: 20px; align-items: flex-start; }
+    .card-icon-wrap {
+      width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center;
+      justify-content: center; font-size: 22px; flex-shrink: 0;
+    }
+    .icon-hackathon { background: rgba(107,140,255,0.1); }
+    .icon-workshop  { background: rgba(62,207,142,0.1); }
+    .icon-ctf       { background: rgba(255,107,157,0.1); }
+    .icon-conference{ background: rgba(255,140,66,0.1); }
+
+    .card-info { flex: 1; min-width: 0; }
+    .card-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    }
+    .status-live { background: rgba(62,207,142,0.12); color: #1fa572; }
+    .status-live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #3ecf8e; display: inline-block; animation: pulse 1.2s ease-in-out infinite; }
+    .status-upcoming { background: rgba(107,140,255,0.1); color: var(--blue); }
+    .status-past { background: rgba(0,0,0,0.05); color: #999; }
+
+    @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.5; transform:scale(1.3); } }
+
+    .type-badge {
+      padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    }
+    .badge-hackathon { background: rgba(107,140,255,0.1); color: var(--blue); }
+    .badge-workshop  { background: rgba(62,207,142,0.1); color: #1fa572; }
+    .badge-ctf       { background: rgba(255,107,157,0.1); color: var(--pink); }
+    .badge-conference{ background: rgba(255,140,66,0.1); color: var(--orange); }
+
+    .card-title { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; line-height: 1.3; }
+    .card-desc { font-size: 14px; color: var(--text-sub); line-height: 1.6; font-weight: 300; margin-bottom: 16px; }
+
+    .card-details { display: flex; gap: 18px; flex-wrap: wrap; }
+    .card-detail { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #777; font-weight: 400; }
+    .card-detail svg { flex-shrink: 0; color: #bbb; }
+
+    .card-footer { padding: 16px 28px; border-top: 1px solid #f5f5f5; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .card-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .skill-tag {
+      background: var(--light-bg); border: 1px solid #e8e8e8; color: #666;
+      font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+    }
+    .view-btn {
+      display: inline-flex; align-items: center; gap: 6px; font-family: inherit;
+      font-size: 13px; font-weight: 600; color: var(--blue); background: rgba(107,140,255,0.08);
+      border: none; border-radius: 999px; padding: 7px 18px; cursor: pointer;
+      transition: background 0.2s, transform 0.15s; white-space: nowrap; text-decoration: none;
+    }
+    .view-btn:hover { background: rgba(107,140,255,0.18); transform: translateX(2px); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 80px 20px; color: #aaa; }
+    .empty-state svg { margin-bottom: 20px; opacity: 0.3; }
+    .empty-state h3 { font-size: 20px; font-weight: 600; color: #bbb; margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── DETAIL MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 500;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    .modal {
+      background: #fff; border-radius: 24px; width: 100%; max-width: 680px;
+      max-height: 88vh; overflow-y: auto; position: relative;
+      transform: translateY(20px) scale(0.97); transition: transform 0.3s cubic-bezier(.22,.7,0,1);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.2);
+    }
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-accent { height: 6px; border-radius: 24px 24px 0 0; }
+    .modal-inner { padding: 36px 36px 32px; }
+
+    .modal-close {
+      position: absolute; top: 20px; right: 20px; background: var(--light-bg);
+      border: none; border-radius: 50%; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      font-size: 18px; color: #666; transition: background 0.2s, color 0.2s; z-index: 1;
+    }
+    .modal-close:hover { background: #f0f0f0; color: #222; }
+
+    .modal-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .modal-title { font-size: 26px; font-weight: 700; line-height: 1.2; margin-bottom: 14px; }
+    .modal-desc { font-size: 15px; color: var(--text-sub); line-height: 1.7; font-weight: 300; margin-bottom: 28px; }
+
+    .modal-section { margin-bottom: 24px; }
+    .modal-section-title { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #bbb; margin-bottom: 14px; }
+
+    /* Timeline */
+    .timeline { position: relative; padding-left: 20px; }
+    .timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg,var(--blue),var(--pink)); opacity: 0.2; border-radius: 2px; }
+    .timeline-item { position: relative; margin-bottom: 18px; }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-dot { position: absolute; left: -17px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); border: 2px solid #fff; box-shadow: 0 0 0 2px rgba(107,140,255,0.3); }
+    .timeline-date { font-size: 11px; font-weight: 700; color: var(--blue); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+    .timeline-event { font-size: 14px; font-weight: 600; color: var(--text-main); }
+    .timeline-note { font-size: 12px; color: #999; margin-top: 2px; }
+
+    /* Info grid */
+    .modal-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .info-chip { background: var(--light-bg); border-radius: 12px; padding: 14px 16px; }
+    .info-chip .label { font-size: 11px; color: #bbb; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+    .info-chip .value { font-size: 14px; font-weight: 600; color: var(--text-main); }
+
+    .modal-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+    .btn-register {
+      flex: 1; min-width: 180px; background: var(--dark); color: #fff;
+      padding: 14px 28px; border-radius: 999px; font-size: 15px; font-weight: 600;
+      border: none; cursor: pointer; font-family: inherit;
+      transition: background 0.25s, transform 0.2s; text-align: center; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-register:hover { background: var(--blue); transform: translateY(-2px); }
+    .btn-register.workshop-link { background: linear-gradient(135deg,#3ecf8e,#6b8cff); }
+    .btn-register.workshop-link:hover { background: linear-gradient(135deg,#6b8cff,#3ecf8e); }
+    .btn-share {
+      padding: 14px 20px; border-radius: 999px; border: 1.5px solid #e0e0e0;
+      background: transparent; font-size: 14px; font-weight: 600; color: #666;
+      cursor: pointer; font-family: inherit; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-share:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .events-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .sidebar-section { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+      .sidebar-title { width: 100%; }
+      .filter-group, .type-filter-group { flex-direction: row; flex-wrap: wrap; }
+      .filter-btn, .type-filter-btn { width: auto; }
+    }
+    @media (max-width: 600px) {
+      .card-body { flex-direction: column; gap: 14px; }
+      .modal-inner { padding: 24px 20px 20px; }
+      .modal-info-grid { grid-template-columns: 1fr; }
+      nav > a:not(.nav-cta) { display: none; }
+    }
+
+    /* ── PROFILE AVATAR ── */
+    .profile-btn {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      font-family: inherit;
+    }
+    .profile-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.5px;
+      transition: box-shadow 0.25s, transform 0.2s;
+    }
+    .profile-btn:hover .profile-avatar { box-shadow: 0 0 0 3px rgba(107,140,255,0.35); transform: scale(1.06); }
+    .profile-dropdown {
+      display: none; position: absolute; top: calc(100% + 12px); right: 0;
+      min-width: 200px; background: #fff; border: 1px solid #eee;
+      border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+      padding: 8px; z-index: 200; animation: dropIn 0.18s ease;
+    }
+    @keyframes dropIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .profile-btn.open .profile-dropdown { display: block; }
+    .pd-info { padding: 10px 12px 12px; border-bottom: 1px solid #f0f0f0; margin-bottom: 6px; }
+    .pd-name { font-size: 14px; font-weight: 700; color: #111; }
+    .pd-role { font-size: 12px; color: #888; margin-top: 2px; }
+    .pd-item {
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+      border-radius: 10px; font-size: 13px; font-weight: 500; color: #333;
+      text-decoration: none; cursor: pointer; background: none; border: none;
+      width: 100%; font-family: inherit; transition: background 0.15s, color 0.15s;
+    }
+    .pd-item:hover { background: var(--light-bg); color: var(--blue); }
+    .pd-item.danger { color: #e85555; }
+    .pd-item.danger:hover { background: rgba(232,85,85,0.06); color: #e85555; }
+  </style>
+  <link rel="stylesheet" href="dark-mode.css">
+  <script src="dark-mode.js"></script>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a href="index.html" class="logo">HyperSpace</a>
+  <nav>
+    <a href="index.html#motive">Mission</a>
+    <a href="index.html#stats">Impact</a>
+    <a href="index.html#pillars">Platform</a>
+    <a href="eventregistration.html" style="color:var(--blue);font-weight:600;">Events</a>
+
+    <!-- Shown only when NOT logged in -->
+    <a href="authentication.html" class="nav-cta" id="nav-signin"
+       style="display:none;" title="Sign in to register for events">Sign In to Register</a>
+
+    <!-- Shown only when logged in -->
+    <div class="profile-btn" id="profile-btn" onclick="toggleProfileMenu(event)" role="button" tabindex="0">
+      <div class="profile-avatar" id="profile-initials">?</div>
+      <div class="profile-dropdown" id="profile-dropdown">
+        <div class="pd-info">
+          <div class="pd-name" id="pd-name">—</div>
+          <div class="pd-role" id="pd-role">—</div>
+        </div>
+        <a href="profile.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="eventregistration.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          All Events
+        </a>
+        <a href="leaderboard.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Leaderboard
+        </a>
+                <div class="pd-item" onclick="toggleDarkMode()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark Mode
+        </div>
+        <div class="pd-item danger" onclick="signOut()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <div class="page-header-inner">
+    <div class="page-label">Community Events</div>
+    <h1 class="page-title">Discover &amp; Join<br><span>Live Experiences</span></h1>
+    <p class="page-subtitle">Hackathons, Workshops, CTF Challenges, and Conferences — all curated for the HyperSpace community.</p>
+    <div class="stats-row">
+      <div class="stat-chip"><div class="num" id="liveCount">0</div><div class="lbl">Live Now</div></div>
+      <div class="stat-chip"><div class="num" id="upcomingCount">0</div><div class="lbl">Upcoming</div></div>
+      <div class="stat-chip"><div class="num" id="pastCount">0</div><div class="lbl">Past Events</div></div>
+      <div class="stat-chip"><div class="num">4</div><div class="lbl">Categories</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="events-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Status</div>
+      <div class="filter-group" id="statusFilters">
+        <button class="filter-btn active" data-status="all" onclick="setStatus('all',this)">
+          All Events <span class="count-badge" id="cnt-all">0</span>
+        </button>
+        <button class="filter-btn" data-status="live" onclick="setStatus('live',this)">
+          🔴 Live Now <span class="count-badge" id="cnt-live">0</span>
+        </button>
+        <button class="filter-btn" data-status="upcoming" onclick="setStatus('upcoming',this)">
+          📅 Upcoming <span class="count-badge" id="cnt-upcoming">0</span>
+        </button>
+        <button class="filter-btn" data-status="past" onclick="setStatus('past',this)">
+          🏁 Past <span class="count-badge" id="cnt-past">0</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Category</div>
+      <div class="filter-group type-filter-group" id="typeFilters">
+        <button class="type-filter-btn active" data-type="all" onclick="setType('all',this)">
+          <span class="type-dot" style="background:linear-gradient(135deg,var(--blue),var(--pink))"></span>
+          All Categories
+        </button>
+        <button class="type-filter-btn" data-type="hackathon" onclick="setType('hackathon',this)">
+          <span class="type-dot dot-hackathon"></span> Hackathons
+        </button>
+        <button class="type-filter-btn" data-type="workshop" onclick="setType('workshop',this)">
+          <span class="type-dot dot-workshop"></span> Workshops
+        </button>
+        <button class="type-filter-btn" data-type="ctf" onclick="setType('ctf',this)">
+          <span class="type-dot dot-ctf"></span> CTF Challenges
+        </button>
+        <button class="type-filter-btn" data-type="conference" onclick="setType('conference',this)">
+          <span class="type-dot dot-conference"></span> Conferences
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- EVENTS MAIN -->
+  <div class="events-main">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search events, topics, skills…" oninput="render()">
+      </div>
+      <select class="sort-select" id="sortSelect" onchange="render()">
+        <option value="date-asc">Date ↑</option>
+        <option value="date-desc">Date ↓</option>
+        <option value="name">Name A–Z</option>
+      </select>
+    </div>
+    <div class="results-count" id="resultsCount"></div>
+    <div class="events-grid" id="eventsGrid"></div>
+  </div>
+</div>
+
+<!-- ── DETAIL MODAL ── -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-accent" id="modalAccent"></div>
+    <div class="modal-inner">
+      <div class="modal-badges" id="modalBadges"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Event Timeline</div>
+        <div class="timeline" id="modalTimeline"></div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Details</div>
+        <div class="modal-info-grid" id="modalInfoGrid"></div>
+      </div>
+
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── EVENT DATA ──
+const EVENTS = [
+  {
+    id: 1, type: 'hackathon', status: 'live',
+    title: 'HyperHack 2026 — Build the Future',
+    emoji: '🚀',
+    short: '48-hour AI-powered hackathon. Build tools that solve real community problems using LLMs, agents, and APIs.',
+    desc: "HyperHack 2026 is our flagship 48-hour hackathon where teams of 2–4 compete to build the most impactful AI-powered tools. This year's theme: Community Intelligence — use LLMs, RAG pipelines, and autonomous agents to solve real problems faced by student communities.",
+    date: '2026-02-28', endDate: '2026-03-02',
+    location: 'Online + HyperSpace Hub', prize: '$2,500 Prize Pool',
+    spots: '80 / 120 Teams', difficulty: 'Intermediate',
+    tags: ['Python', 'LLMs', 'APIs', 'React'],
+    timeline: [
+      { date: 'Feb 28, 2026', event: 'Hackathon Kicks Off', note: 'Opening ceremony + team formation' },
+      { date: 'Mar 01, 2026', event: 'Midpoint Check-in', note: 'Mentor sessions & progress demos' },
+      { date: 'Mar 02, 2026', event: 'Final Submissions', note: 'Code freeze at 12:00 PM UTC' },
+      { date: 'Mar 02, 2026', event: 'Demo Day', note: 'Top 10 teams present live' },
+    ]
+  },
+  {
+    id: 2, type: 'workshop', status: 'upcoming',
+    title: 'Prompt Engineering Masterclass',
+    emoji: '🧠',
+    short: 'Master the art of prompting — from zero-shot reasoning to advanced chain-of-thought techniques.',
+    desc: 'A hands-on, 3-hour deep-dive workshop into the science and art of prompt engineering. You will explore zero-shot, few-shot, chain-of-thought, and ReAct prompting strategies. We will work with real GPT-4o and Gemini 1.5 APIs, building a mini-agent by the end of the session.',
+    date: '2026-03-08', endDate: '2026-03-08',
+    location: 'HyperSpace Virtual Room #3', prize: 'Free for members',
+    spots: '45 / 60 Seats', difficulty: 'Beginner–Intermediate',
+    tags: ['Prompting', 'LLMs', 'Agents', 'Python'],
+    timeline: [
+      { date: 'Mar 08 — 10:00 AM', event: 'Intro & Setup', note: 'Environment setup, API keys' },
+      { date: 'Mar 08 — 11:00 AM', event: 'Core Techniques', note: 'Zero-shot → Chain-of-thought' },
+      { date: 'Mar 08 — 12:30 PM', event: 'Hands-on Lab', note: 'Build your personal mini-agent' },
+      { date: 'Mar 08 — 01:30 PM', event: 'Showcase & Q&A', note: 'Present your agents' },
+    ],
+    detailPage: 'workshop_detail.html'
+  },
+  {
+    id: 3, type: 'ctf', status: 'upcoming',
+    title: 'Cipher Storm CTF — Season 3',
+    emoji: '🔐',
+    short: 'Solve cryptography, web exploitation, and reverse engineering challenges individually or as a team.',
+    desc: 'Cipher Storm CTF Season 3 returns with 40+ challenges across 6 categories: Web, Crypto, Pwn, Forensics, OSINT, and Reverse Engineering. Compete solo or form teams of up to 4. A live scoreboard tracks rankings across 72 hours.',
+    date: '2026-03-14', endDate: '2026-03-17',
+    location: 'HyperSpace CTF Platform', prize: '$1,000 + Merch',
+    spots: 'Open Registration', difficulty: 'All levels',
+    tags: ['Web Exploit', 'Cryptography', 'OSINT', 'Pwn'],
+    timeline: [
+      { date: 'Mar 14, 2026', event: 'Doors Open', note: 'Platform goes live at 00:00 UTC' },
+      { date: 'Mar 15, 2026', event: 'Hint Drops', note: 'Partial hints released for stuck teams' },
+      { date: 'Mar 17, 2026', event: 'CTF Ends', note: 'Scoreboard locks at 23:59 UTC' },
+      { date: 'Mar 18, 2026', event: 'Winners Announced', note: 'Ceremony + writeup release' },
+    ]
+  },
+  {
+    id: 4, type: 'conference', status: 'upcoming',
+    title: 'AI×Security Summit 2026',
+    emoji: '🌐',
+    short: 'Two-day summit bringing together AI researchers, security engineers, and student builders.',
+    desc: 'The AI×Security Summit brings together domain experts, industry practitioners, and the next generation of builders for two days of talks, panels, and workshops. Sessions cover adversarial ML, LLM red-teaming, AI governance, and the future of agentic systems.',
+    date: '2026-04-05', endDate: '2026-04-06',
+    location: 'Virtual + In-Person (Hybrid)', prize: 'Free community tickets',
+    spots: '200 / 300 Seats', difficulty: 'All levels',
+    tags: ['AI Safety', 'Red Teaming', 'Governance', 'LLMs'],
+    timeline: [
+      { date: 'Apr 05 — Day 1', event: 'Keynotes & Panels', note: 'AI safety, adversarial ML, policy' },
+      { date: 'Apr 05 — Evening', event: 'Networking Mixer', note: 'Virtual + in-person rooms' },
+      { date: 'Apr 06 — Day 2', event: 'Technical Workshops', note: 'Hands-on red-teaming labs' },
+      { date: 'Apr 06 — Closing', event: 'Community Recognition', note: 'Awards & announcements' },
+    ]
+  },
+  {
+    id: 5, type: 'hackathon', status: 'past',
+    title: 'CyberBuild 2025 — Hack the Grid',
+    emoji: '⚡',
+    short: 'A 36-hour infrastructure security hackathon. Teams raced to exploit and patch vulnerabilities in a simulated power grid SCADA system.',
+    desc: 'CyberBuild 2025 challenged teams to hunt and patch vulnerabilities in a mock SCADA/ICS environment. Simulating real-world industrial control systems, participants navigated PLC exploits, rogue firmware injections, and HMI bypass attacks in a safe, sandboxed environment.',
+    date: '2025-11-10', endDate: '2025-11-12',
+    location: 'In-Person, TechHub Campus', prize: '$1,800 Prize Pool (Distributed)',
+    spots: '60 Teams Participated', difficulty: 'Advanced',
+    tags: ['ICS/SCADA', 'Exploit Dev', 'C', 'Networking'],
+    timeline: [
+      { date: 'Nov 10, 2025', event: 'Event Started', note: '' },
+      { date: 'Nov 11, 2025', event: 'Midpoint Check', note: '' },
+      { date: 'Nov 12, 2025', event: 'Concluded', note: '22 teams successfully submitted' },
+    ]
+  },
+  {
+    id: 6, type: 'workshop', status: 'past',
+    title: 'RAG Pipelines: From Zero to Production',
+    emoji: '📚',
+    short: 'Build a production-grade Retrieval Augmented Generation pipeline from scratch using LangChain and Pinecone.',
+    desc: 'In this 4-hour workshop, participants built a full RAG pipeline: ingesting documents, chunking and embedding them, storing in a vector DB, and querying via a chat interface. Covered evaluation metrics like MRR and NDCG for retrieval quality.',
+    date: '2025-12-14', endDate: '2025-12-14',
+    location: 'HyperSpace Virtual Room #1', prize: 'Free recording available',
+    spots: '58 Attended', difficulty: 'Intermediate',
+    tags: ['LangChain', 'Pinecone', 'RAG', 'Python'],
+    timeline: [
+      { date: 'Dec 14, 2025', event: 'Workshop Held', note: 'Recording now available on platform' },
+    ]
+  },
+  {
+    id: 7, type: 'ctf', status: 'past',
+    title: 'Shadow CTF 2025',
+    emoji: '👁',
+    short: 'An OSINT-heavy CTF with 30 challenges across forensics, OSINT, and steganography. 412 participants.',
+    desc: 'Shadow CTF 2025 focused heavily on OSINT and digital forensics. Challenges included satellite imagery analysis, metadata extraction from leaked files, dark web OSINT, and audio steganography.',
+    date: '2025-10-20', endDate: '2025-10-22',
+    location: 'HyperSpace CTF Platform', prize: 'Prizes Distributed',
+    spots: '412 Participants', difficulty: 'Beginner–Intermediate',
+    tags: ['OSINT', 'Forensics', 'Stego', 'Recon'],
+    timeline: [
+      { date: 'Oct 20, 2025', event: 'Started', note: '' },
+      { date: 'Oct 22, 2025', event: 'Concluded', note: 'Top 3 awarded' },
+    ]
+  },
+  {
+    id: 8, type: 'conference', status: 'past',
+    title: 'GenAI Builders Summit — Winter \'25',
+    emoji: '🔮',
+    short: 'A 1-day virtual event featuring 8 talks on generative AI applications, safety, and community building.',
+    desc: 'The GenAI Builders Summit Winter \'25 brought together 300+ attendees for 8 high-signal talks covering LLM application architecture, AI safety fundamentals, building dev tools with Gemini, and lessons from deploying agents in production.',
+    date: '2025-12-01', endDate: '2025-12-01',
+    location: 'Virtual — Livestreamed', prize: 'Recordings available',
+    spots: '310 Attended', difficulty: 'All levels',
+    tags: ['GenAI', 'Architecture', 'AI Safety', 'Agents'],
+    timeline: [
+      { date: 'Dec 01, 2025', event: 'Summit Held', note: 'All recordings available on platform' },
+    ]
+  },
+];
+
+// ── STATE ──
+let activeStatus = 'all';
+let activeType = 'all';
+
+function setStatus(s, el) {
+  activeStatus = s;
+  document.querySelectorAll('#statusFilters .filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+function setType(t, el) {
+  activeType = t;
+  document.querySelectorAll('#typeFilters .type-filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function getFiltered() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  return EVENTS.filter(e => {
+    if (activeStatus !== 'all' && e.status !== activeStatus) return false;
+    if (activeType !== 'all' && e.type !== activeType) return false;
+    if (q && !e.title.toLowerCase().includes(q) && !e.short.toLowerCase().includes(q) && !e.tags.some(t=>t.toLowerCase().includes(q))) return false;
+    return true;
+  });
+}
+
+function sorted(arr) {
+  const s = document.getElementById('sortSelect').value;
+  return [...arr].sort((a,b) => {
+    if (s === 'date-asc') return new Date(a.date) - new Date(b.date);
+    if (s === 'date-desc') return new Date(b.date) - new Date(a.date);
+    if (s === 'name') return a.title.localeCompare(b.title);
+    return 0;
+  });
+}
+
+function statusLabel(s) {
+  if (s === 'live') return '<span class="status-badge status-live">LIVE</span>';
+  if (s === 'upcoming') return '<span class="status-badge status-upcoming">UPCOMING</span>';
+  return '<span class="status-badge status-past">PAST</span>';
+}
+function typeLabel(t) {
+  const map = { hackathon:'HACKATHON', workshop:'WORKSHOP', ctf:'CTF', conference:'CONFERENCE' };
+  return `<span class="type-badge badge-${t}">${map[t]}</span>`;
+}
+function fmtDate(d) {
+  return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function render() {
+  const filtered = sorted(getFiltered());
+  const grid = document.getElementById('eventsGrid');
+  const rc = document.getElementById('resultsCount');
+
+  // update counts
+  const all = EVENTS.length;
+  const live = EVENTS.filter(e=>e.status==='live').length;
+  const upcoming = EVENTS.filter(e=>e.status==='upcoming').length;
+  const past = EVENTS.filter(e=>e.status==='past').length;
+  document.getElementById('cnt-all').textContent = all;
+  document.getElementById('cnt-live').textContent = live;
+  document.getElementById('cnt-upcoming').textContent = upcoming;
+  document.getElementById('cnt-past').textContent = past;
+  document.getElementById('liveCount').textContent = live;
+  document.getElementById('upcomingCount').textContent = upcoming;
+  document.getElementById('pastCount').textContent = past;
+
+  const q = document.getElementById('searchInput').value;
+  rc.innerHTML = `Showing <span>${filtered.length}</span> of <span>${all}</span> events${q ? ` for "<b>${q}</b>"` : ''}`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <h3>No events found</h3>
+      <p>Try adjusting your filters or search term.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(e => `
+    <div class="event-card" onclick="openModal(${e.id})">
+      <div class="card-accent accent-${e.type}"></div>
+      <div class="card-body">
+        <div class="card-icon-wrap icon-${e.type}">${e.emoji}</div>
+        <div class="card-info">
+          <div class="card-meta">
+            ${statusLabel(e.status)}
+            ${typeLabel(e.type)}
+          </div>
+          <div class="card-title">${e.title}</div>
+          <div class="card-desc">${e.short}</div>
+          <div class="card-details">
+            <span class="card-detail">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              ${fmtDate(e.date)}${e.date !== e.endDate ? ' – ' + fmtDate(e.endDate) : ''}
+            </span>
+            <span class="card-detail">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${e.location}
+            </span>
+            <span class="card-detail">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              ${e.spots}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-tags">${e.tags.map(t=>`<span class="skill-tag">${t}</span>`).join('')}</div>
+        <button class="view-btn" onclick="event.stopPropagation();openModal(${e.id})">
+          View Details
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── MODAL ──
+function openModal(id) {
+  const e = EVENTS.find(x => x.id === id);
+  if (!e) return;
+
+  const accentMap = { hackathon: 'linear-gradient(90deg,#6b8cff,#a78bff)', workshop: 'linear-gradient(90deg,#3ecf8e,#6b8cff)', ctf: 'linear-gradient(90deg,#ff6b9d,#ff8c42)', conference: 'linear-gradient(90deg,#ff8c42,#f7ca18)' };
+  document.getElementById('modalAccent').style.background = accentMap[e.type];
+
+  const typeNames = { hackathon:'HACKATHON', workshop:'WORKSHOP', ctf:'CTF CHALLENGE', conference:'CONFERENCE' };
+  document.getElementById('modalBadges').innerHTML = `${statusLabel(e.status)} <span class="type-badge badge-${e.type}">${typeNames[e.type]}</span>`;
+  document.getElementById('modalTitle').textContent = e.emoji + ' ' + e.title;
+  document.getElementById('modalDesc').textContent = e.desc;
+
+  document.getElementById('modalTimeline').innerHTML = e.timeline.map(t => `
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">${t.date}</div>
+      <div class="timeline-event">${t.event}</div>
+      ${t.note ? `<div class="timeline-note">${t.note}</div>` : ''}
+    </div>
+  `).join('');
+
+  document.getElementById('modalInfoGrid').innerHTML = `
+    <div class="info-chip"><div class="label">Location</div><div class="value">${e.location}</div></div>
+    <div class="info-chip"><div class="label">Prize / Access</div><div class="value">${e.prize}</div></div>
+    <div class="info-chip"><div class="label">Registration</div><div class="value">${e.spots}</div></div>
+    <div class="info-chip"><div class="label">Difficulty</div><div class="value">${e.difficulty}</div></div>
+  `;
+
+  let registerBtn = '';
+  if (e.status === 'past') {
+    registerBtn = `<button class="btn-register" style="background:#aaa;cursor:default;" disabled>Event Ended</button>`;
+  } else if (e.detailPage) {
+    registerBtn = `<a href="${e.detailPage}" class="btn-register workshop-link">
+      🎓 View Workshop &amp; Register
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>`;
+  } else {
+    registerBtn = `<button class="btn-register" onclick="handleRegister('${e.title}')">
+      Register Now 
+    </button>`;
+  }
+  document.getElementById('modalActions').innerHTML = registerBtn + `<button class="btn-share" onclick="copyLink()">Share</button>`;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModalOnBg(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function handleRegister(title) {
+  alert(`Registration noted for: ${title}\n\nA confirmation will be sent to your email.`);
+}
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    alert('🔗 Link copied to clipboard!');
+  });
+}
+
+// ── INIT ──
+render();
+
+// ── SESSION GUARD ──
+// authentication.html writes key 'hs_user' to localStorage (remember me)
+// or sessionStorage (session only). Check both with the correct key.
+(function initSession() {
+  const raw = localStorage.getItem('hs_user') || sessionStorage.getItem('hs_user');
+  const signinBtn = document.getElementById('nav-signin');
+  const profileBtn = document.getElementById('profile-btn');
+  if (!raw) {
+    // No session → show "Sign In to Register"
+    if (signinBtn) signinBtn.style.display = 'inline-flex';
+    return;
+  }
+  try {
+    const user = JSON.parse(raw);
+    if (signinBtn) signinBtn.style.display = 'none';
+    profileBtn.style.display = 'inline-flex';
+    const initials = (user.name || user.email || '?')
+      .split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('profile-initials').textContent = initials;
+    document.getElementById('pd-name').textContent = user.name || user.email;
+    document.getElementById('pd-role').textContent = user.role || 'Member';
+  } catch(e) {
+    if (signinBtn) signinBtn.style.display = 'inline-flex';
+  }
+})();
+
+function toggleProfileMenu(e) {
+  e.stopPropagation();
+  document.getElementById('profile-btn').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  document.getElementById('profile-btn')?.classList.remove('open');
+});
+function signOut() {
+  localStorage.removeItem('hs_user');
+  sessionStorage.removeItem('hs_user');
+  window.location.href = 'authentication.html';
+}
+</script>
+</body>
+</html>

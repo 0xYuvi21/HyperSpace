@@ -1,0 +1,2080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HyperSpace — My Profile. View your bio, skills, events participated, and points earned." />
+  <title>My Profile — HyperSpace</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue: #6b8cff;
+      --pink: #ff6b9d;
+      --dark: #0d0d14;
+      --light-bg: #f8f9fb;
+      --card-bg: #ffffff;
+      --text-main: #111;
+      --text-sub: #555;
+      --accent: #6b8cff;
+      --green: #3ecf8e;
+      --orange: #ff8c42;
+      --purple: #a78bff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    header {
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248,249,251,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #444;
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 24px;
+      white-space: nowrap;
+      transition: color 0.25s;
+    }
+
+    nav a:hover { color: var(--blue); }
+
+    .nav-cta {
+      background: var(--dark);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 14px !important;
+      transition: background 0.25s !important;
+    }
+
+    .nav-cta:hover { background: var(--blue) !important; }
+
+    /* Profile button (nav) */
+    .profile-btn {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      font-family: inherit;
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      transition: box-shadow 0.25s, transform 0.2s;
+    }
+
+    .profile-btn:hover .profile-avatar {
+      box-shadow: 0 0 0 3px rgba(107,140,255,0.35);
+      transform: scale(1.06);
+    }
+
+    .profile-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      min-width: 200px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+      padding: 8px;
+      z-index: 200;
+      animation: dropIn 0.18s ease;
+    }
+
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-btn.open .profile-dropdown { display: block; }
+
+    .pd-info {
+      padding: 10px 12px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 6px;
+    }
+
+    .pd-name { font-size: 14px; font-weight: 700; color: #111; }
+    .pd-role { font-size: 12px; color: #888; margin-top: 2px; }
+
+    .pd-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      width: 100%;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .pd-item:hover { background: var(--light-bg); color: var(--blue); }
+    .pd-item.danger { color: #e85555; }
+    .pd-item.danger:hover { background: rgba(232,85,85,0.06); color: #e85555; }
+
+    /* ── PROFILE HERO BANNER ── */
+    .profile-hero {
+      background: var(--dark);
+      padding: 80px 8% 52px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.1;
+    }
+
+    .profile-hero-blob.a { width: 400px; height: 400px; background: var(--blue); top: -100px; right: -50px; }
+    .profile-hero-blob.b { width: 300px; height: 300px; background: var(--pink); bottom: 0; left: -50px; }
+
+    .profile-hero-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    /* ── HERO RATING CHART ── */
+    .hero-chart-wrap {
+      flex: 1;
+      min-width: 260px;
+      max-width: 480px;
+      align-self: center;
+      margin-left: auto;
+    }
+
+    .hero-chart-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hero-chart-label span {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #fff;
+      text-transform: none;
+    }
+
+    #rating-canvas {
+      width: 100%;
+      height: 110px;
+      display: block;
+      cursor: crosshair;
+    }
+
+    .hero-chart-months {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .hero-chart-months span {
+      font-size: 10px;
+      color: rgba(255,255,255,0.25);
+      font-weight: 500;
+    }
+
+    .profile-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 700;
+      color: #fff;
+      border: 4px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+      box-shadow: 0 8px 32px rgba(107,140,255,0.4);
+      transition: transform 0.3s;
+      align-self: center;
+      transform: translateY(-12px);
+    }
+
+    .profile-avatar-large:hover { transform: translateY(-12px) scale(1.05); }
+
+    .profile-hero-info {
+      flex: 1;
+      min-width: 200px;
+      padding-bottom: 32px;
+    }
+
+    .profile-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(107,140,255,0.18);
+      border: 1px solid rgba(107,140,255,0.3);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .profile-name-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .profile-name {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+
+    .edit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.65);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .edit-btn:hover {
+      background: rgba(107,140,255,0.25);
+      border-color: rgba(107,140,255,0.5);
+      color: #fff;
+      transform: scale(1.1) rotate(-10deg);
+    }
+
+    /* ── EDIT MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 520px;
+      padding: 36px 32px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.2);
+      animation: slideUp 0.25s ease;
+      position: relative;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--light-bg);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 16px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .modal-close:hover { background: #eee; color: #111; }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #555;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-main);
+      background: var(--light-bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(107,140,255,0.12);
+      background: #fff;
+    }
+
+    .form-textarea { resize: vertical; min-height: 90px; }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    .btn-cancel {
+      padding: 10px 22px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      background: var(--light-bg);
+      border: 1.5px solid #e5e5e5;
+      color: #555;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-cancel:hover { border-color: #bbb; color: #333; }
+
+    .btn-save {
+      padding: 10px 26px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .btn-save:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .save-toast {
+      display: none;
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 999px;
+      z-index: 999;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      gap: 8px;
+      align-items: center;
+      animation: toastIn 0.25s ease;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .profile-tagline {
+      margin-top: 8px;
+      font-size: 15px;
+      color: rgba(255,255,255,0.55);
+      font-weight: 300;
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    .profile-social-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.75);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s;
+    }
+
+    .social-link:hover {
+      background: rgba(107,140,255,0.18);
+      border-color: rgba(107,140,255,0.4);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .social-link svg { flex-shrink: 0; }
+
+    /* ── STATS ROW ── */
+    .stats-strip {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 28px 8%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+    }
+
+    .strip-stat {
+      text-align: center;
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--light-bg);
+      border: 1px solid #eee;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .strip-stat:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(107,140,255,0.1);
+    }
+
+    .strip-stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .strip-stat-label {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #888;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── MAIN CONTENT GRID ── */
+    .profile-layout {
+      padding: 48px 8%;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 24px; }
+
+    .sidebar-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 28px;
+      transition: box-shadow 0.3s;
+    }
+
+    .sidebar-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.07); }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 18px;
+    }
+
+    /* Bio */
+    .bio-text {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* Skills */
+    .skills-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill-chip {
+      background: rgba(107,140,255,0.08);
+      border: 1px solid rgba(107,140,255,0.18);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 999px;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .skill-chip:hover {
+      background: rgba(107,140,255,0.18);
+      transform: scale(1.04);
+    }
+
+    .skill-chip.pink {
+      background: rgba(255,107,157,0.08);
+      border-color: rgba(255,107,157,0.2);
+      color: var(--pink);
+    }
+
+    .skill-chip.green {
+      background: rgba(62,207,142,0.08);
+      border-color: rgba(62,207,142,0.2);
+      color: var(--green);
+    }
+
+    .skill-chip.purple {
+      background: rgba(167,139,255,0.08);
+      border-color: rgba(167,139,255,0.2);
+      color: var(--purple);
+    }
+
+    /* Points card */
+    .points-display {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .points-ring {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 4px 20px rgba(107,140,255,0.3);
+      position: relative;
+    }
+
+    .points-ring::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      z-index: -1;
+      opacity: 0.3;
+      animation: pulse-ring 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.15); opacity: 0; }
+    }
+
+    .points-info h3 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1;
+    }
+
+    .points-info p {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .leaderboard-rank {
+      margin-top: 16px;
+      background: var(--light-bg);
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .rank-label { font-size: 12px; color: #888; font-weight: 500; }
+
+    .rank-value {
+      font-size: 14px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── MAIN PANEL ── */
+    .main-panel { display: flex; flex-direction: column; gap: 28px; }
+
+    .panel-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 32px;
+      transition: box-shadow 0.3s;
+    }
+
+    .panel-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.07); }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .panel-badge {
+      background: rgba(107,140,255,0.08);
+      border: 1px solid rgba(107,140,255,0.18);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+
+    /* Past Event cards */
+    .events-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .event-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--light-bg);
+      border: 1px solid #eee;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .event-row:hover {
+      border-color: rgba(107,140,255,0.3);
+      transform: translateX(4px);
+      box-shadow: 0 4px 20px rgba(107,140,255,0.1);
+    }
+
+    .event-row-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .event-row-icon.ai     { background: linear-gradient(135deg, rgba(107,140,255,0.15), rgba(167,139,255,0.15)); }
+    .event-row-icon.ctf    { background: linear-gradient(135deg, rgba(255,107,157,0.15), rgba(255,140,66,0.15)); }
+    .event-row-icon.panel  { background: linear-gradient(135deg, rgba(62,207,142,0.15), rgba(107,140,255,0.15)); }
+    .event-row-icon.hack   { background: linear-gradient(135deg, rgba(167,139,255,0.15), rgba(255,107,157,0.15)); }
+
+    .event-row-info { flex: 1; min-width: 0; }
+
+    .event-row-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .event-row-date {
+      font-size: 12px;
+      color: #888;
+      margin-top: 3px;
+    }
+
+    .event-row-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .event-pts {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .event-status {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .event-status.completed {
+      background: rgba(62,207,142,0.1);
+      color: var(--green);
+    }
+
+    .event-status.placed {
+      background: rgba(107,140,255,0.1);
+      color: var(--blue);
+    }
+
+    .event-status.pending {
+      background: rgba(255,140,66,0.1);
+      color: var(--orange);
+    }
+
+    /* Upcoming events */
+    .upcoming-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .upcoming-card {
+      border: 1px solid #eee;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--light-bg);
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+
+    .upcoming-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+      border-color: rgba(107,140,255,0.25);
+    }
+
+    .upcoming-banner {
+      height: 6px;
+    }
+
+    .upcoming-banner.ai    { background: linear-gradient(90deg, #6b8cff, #a78bff); }
+    .upcoming-banner.ctf   { background: linear-gradient(90deg, #ff6b9d, #ff8c42); }
+    .upcoming-banner.panel { background: linear-gradient(90deg, #3ecf8e, #6b8cff); }
+    .upcoming-banner.hack  { background: linear-gradient(90deg, #a78bff, #ff6b9d); }
+
+    .upcoming-body { padding: 18px; }
+
+    .upcoming-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .upcoming-tag.pink { color: var(--pink); }
+    .upcoming-tag.green { color: var(--green); }
+    .upcoming-tag.purple { color: var(--purple); }
+
+    .upcoming-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+
+    .upcoming-date {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 14px;
+    }
+
+    .upcoming-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .countdown-chip {
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(255,140,66,0.1);
+      color: var(--orange);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .team-chip {
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(62,207,142,0.1);
+      color: var(--green);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    /* ── ACHIEVEMENTS ── */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 16px;
+    }
+
+    .achievement-item {
+      text-align: center;
+      padding: 20px 12px;
+      border-radius: 16px;
+      background: var(--light-bg);
+      border: 1px solid #eee;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .achievement-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(107,140,255,0.12);
+    }
+
+    .achievement-item.locked { opacity: 0.4; filter: grayscale(1); }
+
+    .achievement-icon { font-size: 32px; margin-bottom: 10px; }
+
+    .achievement-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .achievement-pts {
+      font-size: 10px;
+      color: var(--blue);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    /* ── POINTS HISTORY ── */
+    .history-list { display: flex; flex-direction: column; gap: 0; }
+
+    .history-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 12px;
+    }
+
+    .history-row:last-child { border-bottom: none; }
+
+    .history-left { display: flex; align-items: center; gap: 12px; }
+
+    .history-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .history-dot.earn   { background: var(--green); }
+    .history-dot.bonus  { background: var(--blue); }
+    .history-dot.deduct { background: var(--pink); }
+
+    .history-desc { font-size: 13px; color: var(--text-main); font-weight: 500; }
+    .history-date { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+    .history-pts {
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .history-pts.pos { color: var(--green); }
+    .history-pts.neg { color: var(--pink); }
+
+    /* ── REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.4);
+      padding: 48px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .footer-logo {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    footer .copy { font-size: 13px; }
+
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.25s;
+    }
+
+    .footer-links a:hover { color: #fff; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #bbb;
+    }
+
+    .empty-state svg { margin-bottom: 12px; opacity: 0.4; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      .profile-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      nav > a:not(.nav-cta) { display: none; }
+      .profile-hero { padding: 48px 6% 0; }
+      .profile-layout { padding: 32px 6%; }
+      .stats-strip { padding: 20px 6%; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+  <link rel="stylesheet" href="dark-mode.css">
+  <script src="dark-mode.js"></script>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a href="index.html" style="text-decoration: none;"><div class="logo">HyperSpace</div></a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="index.html#events">Events</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="authentication.html" class="nav-cta" id="nav-join">Join Now</a>
+
+    <!-- Profile button (shown when logged in) -->
+    <div class="profile-btn" id="profile-btn" onclick="toggleProfileMenu(event)" role="button" tabindex="0">
+      <div class="profile-avatar" id="profile-initials">?</div>
+      <div class="profile-dropdown" id="profile-dropdown">
+        <div class="pd-info">
+          <div class="pd-name" id="pd-name">—</div>
+          <div class="pd-role" id="pd-role">—</div>
+        </div>
+        <a href="profile.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="eventregistration.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          All Events
+        </a>
+        <a href="leaderboard.html" class="pd-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Leaderboard
+        </a>
+                <div class="pd-item" onclick="toggleDarkMode()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark Mode
+        </div>
+        <div class="pd-item danger" onclick="signOut()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ── PROFILE HERO BANNER ── -->
+<div class="profile-hero">
+  <div class="profile-hero-blob a"></div>
+  <div class="profile-hero-blob b"></div>
+  <div class="profile-hero-inner">
+    <div class="profile-avatar-large" id="big-avatar">HS</div>
+    <div class="profile-hero-info">
+      <div class="profile-role-badge" id="hero-role-badge">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        Member
+      </div>
+      <div class="profile-name-row">
+        <div class="profile-name" id="hero-name">HyperSpace User</div>
+        <button class="edit-btn" onclick="openEditModal()" title="Edit profile" id="edit-profile-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+      </div>
+      <p class="profile-tagline" id="hero-tagline">
+        AI Enthusiast · Cybersecurity Explorer · Team Builder
+      </p>
+      <div class="profile-social-links" id="hero-social">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- Rating chart on the right -->
+    <div class="hero-chart-wrap">
+      <div class="hero-chart-label">
+        Rating over 2025
+        <span id="chart-current-rating">2050</span>
+      </div>
+      <canvas id="rating-canvas"></canvas>
+      <div class="hero-chart-months">
+        <span>Jan</span><span>Feb</span><span>Mar</span>
+        <span>Apr</span><span>May</span><span>Jun</span>
+        <span>Jul</span><span>Aug</span><span>Sep</span>
+        <span>Oct</span><span>Nov</span><span>Dec</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── EDIT PROFILE MODAL ── -->
+<div class="modal-overlay" id="edit-modal" onclick="closeModalOnBackdrop(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeEditModal()">✕</button>
+    <div class="modal-title">Edit Profile</div>
+    <div class="modal-sub">Changes are saved locally and reflected instantly.</div>
+
+    <div class="form-group">
+      <label class="form-label" for="edit-name">Display Name</label>
+      <input class="form-input" id="edit-name" type="text" placeholder="Your full name" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="edit-tagline">Tagline</label>
+      <input class="form-input" id="edit-tagline" type="text" placeholder="e.g. LLM Engineer · Red Teamer" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="edit-bio">Bio</label>
+      <textarea class="form-textarea" id="edit-bio" placeholder="Tell the community about yourself…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="edit-github">GitHub URL</label>
+      <input class="form-input" id="edit-github" type="url" placeholder="https://github.com/username" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="edit-linkedin">LinkedIn URL</label>
+      <input class="form-input" id="edit-linkedin" type="url" placeholder="https://linkedin.com/in/username" />
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Save toast -->
+<div class="save-toast" id="save-toast">Profile updated!</div>
+
+<!-- ── QUICK STATS STRIP ── -->
+<div class="stats-strip">
+  <div class="strip-stat reveal">
+    <div class="strip-stat-number" id="stat-points">1 240</div>
+    <div class="strip-stat-label">Total Points</div>
+  </div>
+  <div class="strip-stat reveal">
+    <div class="strip-stat-number" id="stat-rank">#7</div>
+    <div class="strip-stat-label">Leaderboard Rank</div>
+  </div>
+  <div class="strip-stat reveal">
+    <div class="strip-stat-number" id="stat-events-done">5</div>
+    <div class="strip-stat-label">Events Completed</div>
+  </div>
+  <div class="strip-stat reveal">
+    <div class="strip-stat-number" id="stat-events-upcoming">2</div>
+    <div class="strip-stat-label">Upcoming Events</div>
+  </div>
+  <div class="strip-stat reveal">
+    <div class="strip-stat-number" id="stat-badges">4</div>
+    <div class="strip-stat-label">Badges Earned</div>
+  </div>
+</div>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="profile-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+
+    <!-- Bio -->
+    <div class="sidebar-card reveal">
+      <div class="card-title">About</div>
+      <p class="bio-text" id="profile-bio">
+        Passionate about building intelligent systems and securing the digital frontier.
+        Currently exploring LLMs, adversarial ML, and red-team tooling.
+        Love hackathons, CTFs, and late-night brainstorms over cold coffee. ☕
+      </p>
+    </div>
+
+    <!-- Skills -->
+    <div class="sidebar-card reveal">
+      <div class="card-title">Skills</div>
+      <div class="skills-list" id="skills-list">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- Points & Rank -->
+    <div class="sidebar-card reveal">
+      <div class="card-title">Points Earned</div>
+      <div class="points-display">
+        <div class="points-ring">⭐</div>
+        <div class="points-info">
+          <h3 id="sidebar-points">1 240 pts</h3>
+          <p>This season</p>
+        </div>
+      </div>
+      <div class="leaderboard-rank">
+        <span class="rank-label">🏆 Leaderboard Rank</span>
+        <span class="rank-value" id="sidebar-rank">#7 of 2K+</span>
+      </div>
+      <div class="leaderboard-rank" style="margin-top:8px;">
+        <span class="rank-label">🔥 Current Streak</span>
+        <span class="rank-value">12 days</span>
+      </div>
+    </div>
+
+    <!-- Social Links -->
+    <div class="sidebar-card reveal">
+      <div class="card-title">Connect</div>
+      <div id="sidebar-social" style="display:flex;flex-direction:column;gap:10px;">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── MAIN PANEL ── -->
+  <div class="main-panel">
+
+    <!-- Upcoming Events (Registered) -->
+    <div class="panel-card reveal">
+      <div class="panel-header">
+        <div class="panel-title">Upcoming Events I'm In</div>
+        <span class="panel-badge" id="upcoming-count">2 registered</span>
+      </div>
+      <div class="upcoming-grid" id="upcoming-events-grid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- Past Events Participated -->
+    <div class="panel-card reveal">
+      <div class="panel-header">
+        <div class="panel-title">Events Participated</div>
+        <span class="panel-badge" id="past-count">5 events</span>
+      </div>
+      <div class="events-list" id="past-events-list">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- Achievements / Badges -->
+    <div class="panel-card reveal">
+      <div class="panel-header">
+        <div class="panel-title">Achievements</div>
+        <span class="panel-badge">4 / 12 unlocked</span>
+      </div>
+      <div class="achievements-grid" id="achievements-grid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- Points History -->
+    <div class="panel-card reveal">
+      <div class="panel-header">
+        <div class="panel-title">Points History</div>
+      </div>
+      <div class="history-list" id="points-history">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div>
+    <div class="footer-logo">HyperSpace</div>
+    <div class="copy">© 2025 HyperSpace. All rights reserved.</div>
+  </div>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="index.html#events">Events</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="authentication.html">Login</a>
+  </div>
+</footer>
+
+<script>
+  /* ────────────────────────────────────────────
+     MOCK USER DATA
+     In production, pull this from your session / backend.
+  ──────────────────────────────────────────── */
+  const SESSION_KEY = 'hs_user';
+
+  function getUser() {
+    const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+
+
+  // Profile data keyed by email — must match authentication.html USERS list
+  const MOCK_USERS = {
+    'yuvaraj21@gmail.com': {
+      name: 'Yuvaraja Kumaran M',
+      role: 'Student',
+      tagline: 'ML Engineer · Hackathon Builder · Community Lead',
+      bio: 'Building at the intersection of AI and Cybersecurity. Passionate about large language models, agent pipelines, and competitive hacking. Always up for a late-night CTF or a 48-hour hackathon grind. 🚀',
+      github: 'https://github.com/',
+      linkedin: 'https://linkedin.com/in/',
+      skills: [
+        { name: 'Machine Learning', color: 'purple' },
+        { name: 'Python', color: '' },
+        { name: 'Web Dev', color: '' },
+        { name: 'LangChain', color: 'purple' },
+        { name: 'Docker', color: 'green' },
+        { name: 'FastAPI', color: 'green' },
+      ],
+      points: 2050,
+      rank: 10,
+      streak: 8,
+      badges: 3,
+    },
+    'alice@mit.edu': {
+      name: 'Alice Chen',
+      role: 'CTF Team Lead',
+      tagline: 'CTF Champion · Red Teamer · Security Researcher',
+      bio: 'CTF addict, vulnerability researcher, and red-team operator. Leading a top-ranked CTF team and mentoring the next generation of hackers. Currently exploring exploit dev and binary exploitation. 🔐',
+      github: 'https://github.com/',
+      linkedin: 'https://linkedin.com/in/',
+      skills: [
+        { name: 'CTF', color: 'pink' },
+        { name: 'Cybersecurity', color: 'pink' },
+        { name: 'Pentesting', color: 'green' },
+        { name: 'Python', color: '' },
+        { name: 'C / Assembly', color: 'purple' },
+      ],
+      points: 4200,
+      rank: 1,
+      streak: 21,
+      badges: 7,
+    },
+    'bob@iit.ac.in': {
+      name: 'Bob Rajan',
+      role: 'AI Builder',
+      tagline: 'AI Engineer · LLM Tinkerer · Open Source Contributor',
+      bio: 'Full-stack AI builder with a love for shipping fast and breaking things. Deep into RAG pipelines, agentic workflows, and multimodal models. Open-source contributor and workshop mentor. 🤖',
+      github: 'https://github.com/',
+      linkedin: 'https://linkedin.com/in/',
+      skills: [
+        { name: 'Python', color: '' },
+        { name: 'LLMs', color: 'purple' },
+        { name: 'RAG', color: 'purple' },
+        { name: 'FastAPI', color: 'green' },
+        { name: 'React', color: '' },
+      ],
+      points: 3840,
+      rank: 2,
+      streak: 15,
+      badges: 5,
+    },
+    'zara@stanford.edu': {
+      name: 'Zara Malik',
+      role: 'Cyber Defender',
+      tagline: 'Threat Hunter · Blue Teamer · AI Security Researcher',
+      bio: 'Security engineer focused on AI threat detection, adversarial ML, and blue-team operations. Researching LLM vulnerabilities and building detection pipelines for autonomous agent misuse. 🛡️',
+      github: 'https://github.com/',
+      linkedin: 'https://linkedin.com/in/',
+      skills: [
+        { name: 'Cybersecurity', color: 'pink' },
+        { name: 'Adversarial ML', color: 'purple' },
+        { name: 'SIEM', color: 'pink' },
+        { name: 'Python', color: '' },
+        { name: 'Threat Intel', color: 'orange' },
+      ],
+      points: 3560,
+      rank: 3,
+      streak: 10,
+      badges: 5,
+    },
+    'dev@hyperspace.dev': {
+      name: 'Dev Tester',
+      role: 'Developer',
+      tagline: 'Platform Dev · QA Lead · Community Builder',
+      bio: 'Working behind the scenes to keep HyperSpace running. Platform infrastructure, QA pipelines, and community tooling — if something is broken, I\'m probably the one who broke and then fixed it. 🔧',
+      github: 'https://github.com/',
+      linkedin: 'https://linkedin.com/in/',
+      skills: [
+        { name: 'JavaScript', color: '' },
+        { name: 'Node.js', color: 'green' },
+        { name: 'Docker', color: 'green' },
+        { name: 'CI/CD', color: 'purple' },
+        { name: 'Testing', color: '' },
+      ],
+      points: 980,
+      rank: 18,
+      streak: 5,
+      badges: 2,
+    },
+    // Legacy demo account
+    'maya@example.com': {
+      name: 'Maya Sharma',
+      role: 'AI Track — Member',
+      tagline: 'LLM Engineer · Red Teamer · Hackathon Addict',
+      bio: 'Passionate about building intelligent systems and securing the digital frontier. Currently exploring LLMs, adversarial ML, and red-team tooling. Love hackathons, CTFs, and late-night brainstorms over cold coffee. ☕',
+      github: 'https://github.com/',
+      linkedin: 'https://linkedin.com/in/',
+      skills: [
+        { name: 'Python', color: '' },
+        { name: 'LangChain', color: '' },
+        { name: 'Machine Learning', color: 'purple' },
+        { name: 'Cybersecurity', color: 'pink' },
+        { name: 'CTF', color: 'pink' },
+        { name: 'Docker', color: 'green' },
+        { name: 'FastAPI', color: 'green' },
+        { name: 'Prompt Eng.', color: 'purple' },
+      ],
+      points: 1240,
+      rank: 7,
+      streak: 12,
+      badges: 4,
+    }
+  };
+
+  // Fallback used when logged-in email has no MOCK_USERS entry
+  const DEFAULT_PROFILE = {
+    tagline: 'HyperSpace Community Member',
+    bio: 'Welcome to HyperSpace — the AI × Cyber student community. Start joining events to earn points and climb the leaderboard!',
+    github: '',
+    linkedin: '',
+    skills: [{ name: 'Getting Started', color: '' }],
+    points: 150,
+    rank: 99,
+    streak: 1,
+    badges: 1,
+  };
+
+  /* ────────────────────────────────────────────
+     UPCOMING EVENTS (mock — replace with DB)
+  ──────────────────────────────────────────── */
+  const UPCOMING_EVENTS = [
+    { id: 'e1', name: 'GenAI Hackathon 2025', type: 'ai', typeLabel: 'AI Track', typeColor: '', date: 'Mar 15, 2025', daysLeft: 13, hasTeam: true,  teamName: 'Null Vectors' },
+    { id: 'e2', name: 'HyperCTF Spring Edition', type: 'ctf', typeLabel: 'CTF', typeColor: 'pink', date: 'Mar 22, 2025', daysLeft: 20, hasTeam: false, teamName: null },
+  ];
+
+  /* ────────────────────────────────────────────
+     PAST EVENTS
+  ──────────────────────────────────────────── */
+  const PAST_EVENTS = [
+    { name: 'AI Model Showdown',       icon: '🤖', type: 'ai',    date: 'Feb 10, 2025', pts: '+180', status: 'completed', statusLabel: 'Completed' },
+    { name: 'CTF Winter Clash',        icon: '🔐', type: 'ctf',   date: 'Jan 28, 2025', pts: '+320', status: 'placed',    statusLabel: '2nd Place' },
+    { name: 'Cyber Panel & AMA',       icon: '🎤', type: 'panel', date: 'Jan 14, 2025', pts: '+50',  status: 'completed', statusLabel: 'Attended'  },
+    { name: 'Hack The Box Night',      icon: '💻', type: 'hack',  date: 'Dec 20, 2024', pts: '+280', status: 'placed',    statusLabel: '1st Place' },
+    { name: 'Intro to LLMs Workshop',  icon: '🧠', type: 'ai',    date: 'Dec 5, 2024',  pts: '+100', status: 'completed', statusLabel: 'Completed' },
+  ];
+
+  /* ────────────────────────────────────────────
+     ACHIEVEMENTS
+  ──────────────────────────────────────────── */
+  const ACHIEVEMENTS = [
+    { icon: '🏆', name: 'First Place',     pts: '500 pts', locked: false },
+    { icon: '🥈', name: 'Runner Up',       pts: '300 pts', locked: false },
+    { icon: '🔥', name: '10-Day Streak',   pts: '100 pts', locked: false },
+    { icon: '🤝', name: 'Team Player',     pts: '150 pts', locked: false },
+    { icon: '🧠', name: 'AI Wizard',       pts: '200 pts', locked: true  },
+    { icon: '🔐', name: 'CTF Master',      pts: '400 pts', locked: true  },
+    { icon: '🚀', name: 'Hackathon Hero',  pts: '350 pts', locked: true  },
+    { icon: '📚', name: 'Workshop Guru',   pts: '120 pts', locked: true  },
+  ];
+
+  /* ────────────────────────────────────────────
+     POINTS HISTORY
+  ──────────────────────────────────────────── */
+  const POINTS_HISTORY = [
+    { type: 'earn',  desc: 'AI Model Showdown — Participated',   date: 'Feb 10, 2025', pts: '+180' },
+    { type: 'bonus', desc: 'CTF Winter Clash — 2nd Place Bonus',  date: 'Jan 28, 2025', pts: '+320' },
+    { type: 'earn',  desc: 'Cyber Panel & AMA — Attendance',      date: 'Jan 14, 2025', pts: '+50'  },
+    { type: 'bonus', desc: 'Hack The Box Night — 1st Place',       date: 'Dec 20, 2024', pts: '+280' },
+    { type: 'earn',  desc: 'LLMs Workshop — Completion',           date: 'Dec 5, 2024',  pts: '+100' },
+    { type: 'bonus', desc: 'Profile Setup Bonus',                  date: 'Nov 30, 2024', pts: '+50'  },
+    { type: 'earn',  desc: 'Community Welcome Bonus',              date: 'Nov 28, 2024', pts: '+260' },
+  ];
+
+  function initials(name) {
+    return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  }
+
+  function renderSocialLink(href, label, iconSvg) {
+    return `<a href="${href}" target="_blank" rel="noopener" class="social-link">${iconSvg}${label}</a>`;
+  }
+
+  const GITHUB_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.385.6.113.82-.26.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23A11.5 11.5 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.29-1.552 3.297-1.23 3.297-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.807 5.625-5.479 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.298 24 12c0-6.627-5.373-12-12-12z"/></svg>`;
+  const LINKEDIN_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`;
+
+  function renderSocialLinks(github, linkedin) {
+    let html = '';
+    if (github)   html += renderSocialLink(github,   'GitHub',   GITHUB_SVG);
+    if (linkedin) html += renderSocialLink(linkedin, 'LinkedIn', LINKEDIN_SVG);
+    return html;
+  }
+
+  function renderSidebarSocialLinks(github, linkedin) {
+    let html = '';
+    const style = 'display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--light-bg);border:1px solid #eee;text-decoration:none;font-size:13px;font-weight:600;color:var(--text-main);transition:background 0.2s,color 0.2s,transform 0.2s;';
+    const hover = `onmouseover="this.style.background='rgba(107,140,255,0.08)';this.style.color='var(--blue)';this.style.transform='translateX(4px)'" onmouseout="this.style.background='var(--light-bg)';this.style.color='var(--text-main)';this.style.transform=''"`;
+    if (github)   html += `<a href="${github}"   target="_blank" rel="noopener" style="${style}" ${hover}>${GITHUB_SVG} GitHub</a>`;
+    if (linkedin) html += `<a href="${linkedin}" target="_blank" rel="noopener" style="${style}" ${hover}>${LINKEDIN_SVG} LinkedIn</a>`;
+    return html;
+  }
+
+  /* ────────────────────────────────────────────
+     POPULATE PAGE
+  ──────────────────────────────────────────── */
+  function populatePage(user) {
+    // Determine data source — MOCK_USERS (by email) → DEFAULT_PROFILE → session minimal
+    const full    = MOCK_USERS[user?.email] || DEFAULT_PROFILE;
+    
+    // Prioritize the name from session data if it's a new user without a hardcoded mock profile
+    const name    = full?.name && full !== DEFAULT_PROFILE ? full.name : (user?.name || 'HyperSpace User');
+    
+    const role    = full?.role    || user?.role    || 'Member';
+    const avatar  = initials(name);
+    const tagline = full?.tagline || DEFAULT_PROFILE.tagline;
+    const bio     = full?.bio     || DEFAULT_PROFILE.bio;
+    const github  = full?.github  || user?.github  || '';
+    const linkedin= full?.linkedin|| user?.linkedin || '';
+    const skills  = full?.skills  || DEFAULT_PROFILE.skills;
+    const points  = full?.points  ?? DEFAULT_PROFILE.points;
+    const rank    = full?.rank    ?? DEFAULT_PROFILE.rank;
+    const streak  = full?.streak  ?? DEFAULT_PROFILE.streak;
+    const badges  = full?.badges  ?? DEFAULT_PROFILE.badges;
+
+    // Hero
+    document.getElementById('big-avatar').textContent      = avatar;
+    document.getElementById('hero-role-badge').innerHTML   = `<svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> ${role}`;
+    document.getElementById('hero-name').textContent       = name;
+    document.getElementById('hero-tagline').textContent    = tagline;
+    document.getElementById('hero-social').innerHTML       = renderSocialLinks(github, linkedin);
+
+    // Bio
+    document.getElementById('profile-bio').textContent = bio;
+
+    // Skills
+    const skillsHtml = skills.map(s => `<span class="skill-chip ${s.color || ''}">${s.name}</span>`).join('');
+    document.getElementById('skills-list').innerHTML = skillsHtml || '<span style="color:#bbb;font-size:13px;">No skills listed yet.</span>';
+
+    // Quick stats
+    document.getElementById('stat-points').textContent         = points.toLocaleString();
+    document.getElementById('stat-rank').textContent           = '#' + rank;
+    document.getElementById('stat-events-done').textContent    = PAST_EVENTS.length;
+    document.getElementById('stat-events-upcoming').textContent= UPCOMING_EVENTS.length;
+    document.getElementById('stat-badges').textContent         = badges;
+
+    // Sidebar points
+    document.getElementById('sidebar-points').textContent = points.toLocaleString() + ' pts';
+    document.getElementById('sidebar-rank').textContent   = '#' + rank + ' of 2K+';
+
+    // Sidebar social
+    document.getElementById('sidebar-social').innerHTML = renderSidebarSocialLinks(github, linkedin) ||
+      '<p style="font-size:13px;color:#bbb;">No links added yet.</p>';
+
+    // Nav avatar
+    const profileBtn = document.getElementById('profile-btn');
+    const navJoin    = document.getElementById('nav-join');
+    if (user) {
+      profileBtn.style.display = 'flex';
+      navJoin.style.display    = 'none';
+      document.getElementById('profile-initials').textContent = avatar;
+      document.getElementById('pd-name').textContent = name;
+      document.getElementById('pd-role').textContent = role;
+    }
+  }
+
+  /* ────────────────────────────────────────────
+     RENDER UPCOMING EVENTS
+  ──────────────────────────────────────────── */
+  function renderUpcoming() {
+    const grid = document.getElementById('upcoming-events-grid');
+    document.getElementById('upcoming-count').textContent = UPCOMING_EVENTS.length + ' registered';
+
+    if (UPCOMING_EVENTS.length === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <p>You haven't registered for any upcoming events yet.</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = UPCOMING_EVENTS.map(ev => `
+      <div class="upcoming-card">
+        <div class="upcoming-banner ${ev.type}"></div>
+        <div class="upcoming-body">
+          <div class="upcoming-tag ${ev.typeColor}">${ev.typeLabel}</div>
+          <div class="upcoming-name">${ev.name}</div>
+          <div class="upcoming-date">📅 ${ev.date}</div>
+          <div class="upcoming-footer">
+            <span class="countdown-chip">⏳ ${ev.daysLeft}d left</span>
+            ${ev.hasTeam
+              ? `<span class="team-chip">👥 ${ev.teamName}</span>`
+              : `<span style="font-size:11px;color:#bbb;font-weight:600;">Solo</span>`
+            }
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  /* ────────────────────────────────────────────
+     RENDER PAST EVENTS
+  ──────────────────────────────────────────── */
+  function renderPastEvents() {
+    const list = document.getElementById('past-events-list');
+    document.getElementById('past-count').textContent = PAST_EVENTS.length + ' events';
+
+    if (PAST_EVENTS.length === 0) {
+      list.innerHTML = `<div class="empty-state">
+        <p>No events participated yet. Go join one!</p>
+      </div>`;
+      return;
+    }
+
+    list.innerHTML = PAST_EVENTS.map(ev => `
+      <div class="event-row">
+        <div class="event-row-icon ${ev.type}">${ev.icon}</div>
+        <div class="event-row-info">
+          <div class="event-row-name">${ev.name}</div>
+          <div class="event-row-date">📅 ${ev.date}</div>
+        </div>
+        <div class="event-row-meta">
+          <span class="event-pts">${ev.pts} pts</span>
+          <span class="event-status ${ev.status}">${ev.statusLabel}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  /* ────────────────────────────────────────────
+     RENDER ACHIEVEMENTS
+  ──────────────────────────────────────────── */
+  function renderAchievements() {
+    const grid = document.getElementById('achievements-grid');
+    grid.innerHTML = ACHIEVEMENTS.map(a => `
+      <div class="achievement-item ${a.locked ? 'locked' : ''}">
+        <div class="achievement-icon">${a.icon}</div>
+        <div class="achievement-name">${a.name}</div>
+        <div class="achievement-pts">${a.locked ? '🔒 Locked' : a.pts}</div>
+      </div>
+    `).join('');
+  }
+
+  /* ────────────────────────────────────────────
+     RENDER POINTS HISTORY
+  ──────────────────────────────────────────── */
+  function renderPointsHistory() {
+    const list = document.getElementById('points-history');
+    list.innerHTML = POINTS_HISTORY.map(h => `
+      <div class="history-row">
+        <div class="history-left">
+          <div class="history-dot ${h.type}"></div>
+          <div>
+            <div class="history-desc">${h.desc}</div>
+            <div class="history-date">${h.date}</div>
+          </div>
+        </div>
+        <div class="history-pts pos">${h.pts}</div>
+      </div>
+    `).join('');
+  }
+
+  /* ────────────────────────────────────────────
+     EDIT PROFILE MODAL
+  ──────────────────────────────────────────── */
+  // Internal store for editable fields
+  const PROFILE_STORAGE_KEY = 'hs_profile';
+
+  let _profileData = {
+    name:     '',
+    tagline:  '',
+    bio:      '',
+    github:   '',
+    linkedin: '',
+  };
+
+  function loadSavedProfile() {
+    try {
+      const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  function openEditModal() {
+    // Pre-fill inputs with current displayed values
+    document.getElementById('edit-name').value     = document.getElementById('hero-name').textContent.trim();
+    document.getElementById('edit-tagline').value  = document.getElementById('hero-tagline').textContent.trim();
+    document.getElementById('edit-bio').value      = document.getElementById('profile-bio').textContent.trim();
+    document.getElementById('edit-github').value   = _profileData.github;
+    document.getElementById('edit-linkedin').value = _profileData.linkedin;
+    document.getElementById('edit-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOnBackdrop(e) {
+    if (e.target === document.getElementById('edit-modal')) closeEditModal();
+  }
+
+  function saveProfile() {
+    const name     = document.getElementById('edit-name').value.trim()     || _profileData.name;
+    const tagline  = document.getElementById('edit-tagline').value.trim()  || _profileData.tagline;
+    const bio      = document.getElementById('edit-bio').value.trim()      || _profileData.bio;
+    const github   = document.getElementById('edit-github').value.trim();
+    const linkedin = document.getElementById('edit-linkedin').value.trim();
+
+    // Update store
+    _profileData = { name, tagline, bio, github, linkedin };
+
+    // Persist to localStorage so edits survive a refresh
+    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(_profileData));
+
+    // Live-update hero
+    document.getElementById('hero-name').textContent    = name;
+    document.getElementById('hero-tagline').textContent = tagline;
+    document.getElementById('profile-bio').textContent  = bio;
+
+    // Update nav avatar initials
+    const av = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    document.getElementById('big-avatar').textContent           = av;
+    document.getElementById('profile-initials').textContent     = av;
+
+    // Update social links
+    document.getElementById('hero-social').innerHTML    = renderSocialLinks(github, linkedin);
+    document.getElementById('sidebar-social').innerHTML = renderSidebarSocialLinks(github, linkedin) ||
+      '<p style="font-size:13px;color:#bbb;">No links added yet.</p>';
+
+    closeEditModal();
+    showSaveToast();
+  }
+
+  function showSaveToast() {
+    const toast = document.getElementById('save-toast');
+    toast.style.display = 'flex';
+    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+  }
+
+  /* ────────────────────────────────────────────
+     RATING LINE CHART
+  ──────────────────────────────────────────── */
+  const RATING_DATA = [320, 480, 420, 610, 700, 680, 820, 890, 950, 1050, 1180, 1240];
+  const MONTHS      = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function drawRatingChart(progress = 1) {
+    const canvas = document.getElementById('rating-canvas');
+    if (!canvas) return;
+
+    // size canvas to its CSS dimensions (hi-DPI)
+    const dpr  = window.devicePixelRatio || 1;
+    const rect  = canvas.getBoundingClientRect();
+    canvas.width  = rect.width  * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const W = rect.width;
+    const H = rect.height;
+    const pad = { top: 8, right: 12, bottom: 4, left: 32 };
+    const chartW = W - pad.left - pad.right;
+    const chartH = H - pad.top  - pad.bottom;
+
+    const minVal = 0;
+    const maxVal = Math.max(...RATING_DATA) * 1.12;
+
+    // how many points to draw based on animation progress
+    const visibleCount = Math.max(2, Math.round(progress * RATING_DATA.length));
+    const visibleData  = RATING_DATA.slice(0, visibleCount);
+
+    function xPos(i, total) { return pad.left + (i / (total - 1)) * chartW; }
+    function yPos(val)       { return pad.top  + chartH - ((val - minVal) / (maxVal - minVal)) * chartH; }
+
+    const allX = visibleData.map((_, i) => xPos(i, RATING_DATA.length));
+    const allY = visibleData.map(v => yPos(v));
+
+    // ── Gridlines ──
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth   = 1;
+    [0.25, 0.5, 0.75, 1].forEach(f => {
+      const y = pad.top + chartH * (1 - f);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(pad.left + chartW, y);
+      ctx.stroke();
+      // rating label
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.font = '9px Space Grotesk, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.round(maxVal * f), pad.left - 4, y + 3.5);
+    });
+
+    // ── Gradient fill under line ──
+    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+    grad.addColorStop(0,   'rgba(107,140,255,0.35)');
+    grad.addColorStop(0.6, 'rgba(107,140,255,0.08)');
+    grad.addColorStop(1,   'rgba(107,140,255,0)');
+
+    // Build smooth path (cubic bezier)
+    function buildPath() {
+      ctx.beginPath();
+      ctx.moveTo(allX[0], allY[0]);
+      for (let i = 1; i < allX.length; i++) {
+        const cpX1 = allX[i - 1] + (allX[i] - allX[i - 1]) * 0.5;
+        const cpX2 = allX[i]     - (allX[i] - allX[i - 1]) * 0.5;
+        ctx.bezierCurveTo(cpX1, allY[i - 1], cpX2, allY[i], allX[i], allY[i]);
+      }
+    }
+
+    // Fill
+    buildPath();
+    ctx.lineTo(allX[allX.length - 1], pad.top + chartH);
+    ctx.lineTo(allX[0], pad.top + chartH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line stroke
+    buildPath();
+    const lineGrad = ctx.createLinearGradient(allX[0], 0, allX[allX.length - 1], 0);
+    lineGrad.addColorStop(0,   '#6b8cff');
+    lineGrad.addColorStop(0.5, '#a78bff');
+    lineGrad.addColorStop(1,   '#ff6b9d');
+    ctx.strokeStyle = lineGrad;
+    ctx.lineWidth   = 2.5;
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    // ── End dot with glow ──
+    const ex = allX[allX.length - 1];
+    const ey = allY[allY.length - 1];
+    ctx.shadowColor = '#a78bff';
+    ctx.shadowBlur  = 10;
+    ctx.beginPath();
+    ctx.arc(ex, ey, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#a78bff';
+    ctx.lineWidth   = 2;
+    ctx.stroke();
+  }
+
+  function animateChart() {
+    const duration = 1200; // ms
+    const start    = performance.now();
+    function frame(now) {
+      const t = Math.min((now - start) / duration, 1);
+      // ease out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      drawRatingChart(eased);
+      if (t < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // Hover tooltip
+  function attachChartTooltip() {
+    const canvas = document.getElementById('rating-canvas');
+    if (!canvas) return;
+
+    const tip = document.createElement('div');
+    tip.id = 'chart-tip';
+    Object.assign(tip.style, {
+      position: 'fixed', display: 'none',
+      background: 'rgba(13,13,20,0.92)',
+      border: '1px solid rgba(255,255,255,0.12)',
+      borderRadius: '8px', padding: '6px 10px',
+      fontSize: '12px', fontWeight: '600', color: '#fff',
+      pointerEvents: 'none', zIndex: '999',
+      backdropFilter: 'blur(4px)',
+    });
+    document.body.appendChild(tip);
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx   = e.clientX - rect.left;
+      const pad  = { left: 32, right: 12 };
+      const chartW = rect.width - pad.left - pad.right;
+      const idx    = Math.round(((mx - pad.left) / chartW) * (RATING_DATA.length - 1));
+      const clamped = Math.max(0, Math.min(RATING_DATA.length - 1, idx));
+
+      tip.style.display = 'block';
+      tip.style.left    = (e.clientX + 12) + 'px';
+      tip.style.top     = (e.clientY - 28) + 'px';
+      tip.innerHTML     = `<span style="color:#a78bff">${MONTHS[clamped]}</span> &nbsp;${RATING_DATA[clamped].toLocaleString()} pts`;
+    });
+
+    canvas.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  }
+
+  /* ────────────────────────────────────────────
+     NAV PROFILE TOGGLE
+  ──────────────────────────────────────────── */
+  function toggleProfileMenu(e) {
+    e.stopPropagation();
+    document.getElementById('profile-btn').classList.toggle('open');
+  }
+
+  function signOut() {
+    localStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(SESSION_KEY);
+    window.location.href = 'authentication.html';
+  }
+
+  document.addEventListener('click', () => {
+    document.getElementById('profile-btn').classList.remove('open');
+  });
+
+  /* ────────────────────────────────────────────
+     SCROLL REVEAL
+  ──────────────────────────────────────────── */
+  function initScrollReveal() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }
+
+  /* ────────────────────────────────────────────
+     INIT
+  ──────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const session = getUser();
+
+    // Use session user if present, otherwise render with default mock for demo
+    const demoUser = session || {
+      email: 'maya@example.com',
+      name: 'Maya Sharma',
+    };
+
+    populatePage(demoUser);
+
+    // Seed editable profile store — localStorage wins over mock defaults
+    const _full   = MOCK_USERS[demoUser?.email] || {};
+    const _saved  = loadSavedProfile();
+
+    _profileData = {
+      name:     _saved?.name     ?? _full.name     ?? demoUser?.name    ?? 'HyperSpace User',
+      tagline:  _saved?.tagline  ?? _full.tagline  ?? '',
+      bio:      _saved?.bio      ?? _full.bio      ?? '',
+      github:   _saved?.github   ?? _full.github   ?? '',
+      linkedin: _saved?.linkedin ?? _full.linkedin ?? '',
+    };
+
+    // If we have saved data, apply it to the DOM (overrides mock)
+    if (_saved) {
+      document.getElementById('hero-name').textContent    = _profileData.name;
+      document.getElementById('hero-tagline').textContent = _profileData.tagline;
+      document.getElementById('profile-bio').textContent  = _profileData.bio;
+
+      const av = _profileData.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      document.getElementById('big-avatar').textContent       = av;
+      const pi = document.getElementById('profile-initials');
+      if (pi) pi.textContent = av;
+
+      document.getElementById('hero-social').innerHTML    = renderSocialLinks(_profileData.github, _profileData.linkedin);
+      document.getElementById('sidebar-social').innerHTML = renderSidebarSocialLinks(_profileData.github, _profileData.linkedin) ||
+        '<p style="font-size:13px;color:#bbb;">No links added yet.</p>';
+    }
+
+    renderUpcoming();
+    renderPastEvents();
+    renderAchievements();
+    renderPointsHistory();
+    initScrollReveal();
+    animateChart();
+    attachChartTooltip();
+    window.addEventListener('resize', () => drawRatingChart());
+
+    // Stagger reveal animations
+    document.querySelectorAll('.strip-stat').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 100 + i * 80);
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HyperSpace Community Discussion — Share event experiences, anticipate upcoming events, and promote your own events." />
+  <title>Discussion — HyperSpace Community</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --blue: #6b8cff;
+      --pink: #ff6b9d;
+      --dark: #0d0d14;
+      --light-bg: #f8f9fb;
+      --card-bg: #ffffff;
+      --text-main: #111;
+      --text-sub: #555;
+      --accent: #6b8cff;
+      --border: #ebebeb;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    header {
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(248,249,251,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+
+    nav { display: flex; align-items: center; gap: 0; }
+
+    nav a {
+      text-decoration: none;
+      color: #444;
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 24px;
+      white-space: nowrap;
+      transition: color 0.25s;
+    }
+
+    nav a:hover, nav a.active { color: var(--blue); }
+
+    .nav-cta {
+      background: var(--dark);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-size: 14px !important;
+      transition: background 0.25s !important;
+    }
+    .nav-cta:hover { background: var(--blue) !important; }
+
+    /* Profile dropdown (same pattern as heropage) */
+    .profile-btn {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      font-family: inherit;
+    }
+    .profile-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff;
+      transition: box-shadow 0.25s, transform 0.2s;
+    }
+    .profile-btn:hover .profile-avatar { box-shadow: 0 0 0 3px rgba(107,140,255,0.35); transform: scale(1.06); }
+    .profile-dropdown {
+      display: none;
+      position: absolute; top: calc(100% + 12px); right: 0;
+      min-width: 200px; background: #fff; border: 1px solid #eee;
+      border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+      padding: 8px; z-index: 200; animation: dropIn 0.18s ease;
+    }
+    @keyframes dropIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .profile-btn.open .profile-dropdown { display: block; }
+    .pd-info { padding: 10px 12px 12px; border-bottom: 1px solid #f0f0f0; margin-bottom: 6px; }
+    .pd-name { font-size: 14px; font-weight: 700; color: #111; }
+    .pd-role { font-size: 12px; color: #888; margin-top: 2px; }
+    .pd-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 10px; font-size: 13px;
+      font-weight: 500; color: #333; text-decoration: none;
+      cursor: pointer; background: none; border: none; width: 100%;
+      font-family: inherit; transition: background 0.15s, color 0.15s;
+    }
+    .pd-item:hover { background: var(--light-bg); color: var(--blue); }
+    .pd-item.danger { color: #e85555; }
+    .pd-item.danger:hover { background: rgba(232,85,85,0.06); color: #e85555; }
+
+    /* ── PAGE LAYOUT ── */
+    .page-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── VIEW TOGGLE ── */
+    #detail-view { display: none; }
+
+    /* ── LIST VIEW HEADER ── */
+    .disc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 28px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .disc-title-block h1 {
+      font-size: 28px; font-weight: 700; letter-spacing: -0.5px;
+    }
+    .disc-title-block p {
+      font-size: 14px; color: var(--text-sub); margin-top: 4px;
+    }
+
+    .btn-new-post {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      color: #fff; font-size: 14px; font-weight: 600;
+      padding: 10px 22px; border-radius: 999px; border: none;
+      cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+      font-family: inherit; text-decoration: none; white-space: nowrap;
+    }
+    .btn-new-post:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ── FILTER TABS ── */
+    .filter-tabs {
+      display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .filter-tab {
+      padding: 6px 16px; border-radius: 999px; font-size: 13px;
+      font-weight: 600; border: 1.5px solid var(--border);
+      background: #fff; color: #555; cursor: pointer;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .filter-tab.active, .filter-tab:hover {
+      background: var(--dark); color: #fff; border-color: var(--dark);
+    }
+
+    /* ── POST CARD (list) ── */
+    .post-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .post-card {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px 22px;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .post-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(107,140,255,0.10);
+      border-color: rgba(107,140,255,0.3);
+    }
+
+    .post-vote {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      min-width: 38px; padding-top: 2px;
+    }
+    .vote-btn {
+      width: 28px; height: 28px; border-radius: 8px; border: none;
+      background: var(--light-bg); cursor: pointer; font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .vote-btn:hover { background: rgba(107,140,255,0.15); color: var(--blue); }
+    .vote-btn.up.voted { background: rgba(107,140,255,0.15); color: var(--blue); }
+    .vote-btn.down.voted { background: rgba(255,107,157,0.12); color: var(--pink); }
+    .vote-count { font-size: 13px; font-weight: 700; color: #333; }
+
+    .post-main { flex: 1; min-width: 0; }
+
+    .post-meta {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap;
+    }
+    .post-tag {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+    }
+    .tag-experience { background: rgba(62,207,142,0.12); color: #1fa06e; }
+    .tag-upcoming   { background: rgba(107,140,255,0.12); color: var(--blue); }
+    .tag-promote    { background: rgba(255,107,157,0.12); color: var(--pink); }
+    .tag-general    { background: rgba(167,139,255,0.12); color: #7c5cbf; }
+
+    .post-author { font-size: 12px; color: #888; }
+    .post-author span { font-weight: 600; color: #555; }
+    .post-time { font-size: 12px; color: #bbb; }
+
+    .post-title {
+      font-size: 16px; font-weight: 700; margin-bottom: 6px;
+      line-height: 1.4; color: var(--text-main);
+    }
+
+    .post-excerpt {
+      font-size: 13px; color: #888; line-height: 1.6;
+      display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    .post-footer {
+      display: flex; align-items: center; gap: 16px; margin-top: 12px;
+    }
+    .post-stat {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: #aaa; font-weight: 500;
+    }
+    .post-stat svg { width: 14px; height: 14px; }
+
+    /* ── DETAIL VIEW ── */
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: none; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: var(--blue);
+      font-family: inherit; margin-bottom: 24px;
+      padding: 6px 0; transition: gap 0.2s;
+    }
+    .back-btn:hover { gap: 10px; }
+
+    .detail-card {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px 32px 28px; margin-bottom: 24px;
+    }
+
+    .detail-meta {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+    }
+
+    .detail-title { font-size: 24px; font-weight: 700; line-height: 1.35; margin-bottom: 18px; letter-spacing: -0.3px; }
+
+    .detail-body { font-size: 15px; line-height: 1.75; color: #333; white-space: pre-line; }
+
+    .detail-actions {
+      display: flex; align-items: center; gap: 16px; margin-top: 22px;
+      padding-top: 18px; border-top: 1px solid var(--border);
+    }
+    .action-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--light-bg); border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; color: #555;
+      padding: 8px 14px; border-radius: 999px; font-family: inherit;
+      transition: background 0.2s, color 0.2s;
+    }
+    .action-btn:hover { background: rgba(107,140,255,0.12); color: var(--blue); }
+    .action-btn.voted-up { background: rgba(107,140,255,0.15); color: var(--blue); }
+
+    /* ── REPLIES SECTION ── */
+    .replies-section { margin-top: 8px; }
+
+    .replies-header {
+      font-size: 16px; font-weight: 700; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .replies-count-badge {
+      background: var(--light-bg); border: 1px solid var(--border);
+      border-radius: 999px; font-size: 12px; font-weight: 700;
+      padding: 2px 10px; color: #555;
+    }
+
+    /* Reply box */
+    .reply-compose {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 16px; padding: 20px 22px; margin-bottom: 20px;
+    }
+    .reply-compose-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+    }
+    .mini-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .reply-compose-top span { font-size: 13px; font-weight: 600; color: #444; }
+    .reply-textarea {
+      width: 100%; min-height: 90px; border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 12px 14px; font-family: inherit;
+      font-size: 14px; color: var(--text-main); resize: vertical;
+      transition: border-color 0.2s; outline: none; background: var(--light-bg);
+    }
+    .reply-textarea:focus { border-color: var(--blue); background: #fff; }
+    .reply-submit-row {
+      display: flex; justify-content: flex-end; margin-top: 10px;
+    }
+    .btn-reply-submit {
+      background: var(--dark); color: #fff; font-family: inherit;
+      font-size: 13px; font-weight: 600; padding: 9px 22px;
+      border-radius: 999px; border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-reply-submit:hover { background: var(--blue); transform: translateY(-1px); }
+
+    /* Individual reply */
+    .reply-thread { display: flex; flex-direction: column; gap: 14px; }
+
+    .reply-item {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 18px;
+    }
+    .reply-item.nested {
+      margin-left: 36px;
+      border-left: 3px solid rgba(107,140,255,0.25);
+      border-radius: 0 14px 14px 0;
+      padding-left: 20px;
+    }
+
+    .reply-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .reply-author { font-size: 13px; font-weight: 700; color: #333; }
+    .reply-time { font-size: 12px; color: #bbb; }
+    .reply-role-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 8px;
+      border-radius: 999px; letter-spacing: 0.5px;
+    }
+    .badge-op { background: rgba(107,140,255,0.12); color: var(--blue); }
+    .badge-mod { background: rgba(62,207,142,0.12); color: #1fa06e; }
+
+    .reply-body { font-size: 14px; line-height: 1.65; color: #333; }
+
+    .reply-actions {
+      display: flex; align-items: center; gap: 12px; margin-top: 10px;
+    }
+    .reply-vote-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 12px; font-weight: 600; color: #aaa;
+      display: flex; align-items: center; gap: 4px;
+      font-family: inherit; padding: 4px 8px; border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .reply-vote-btn:hover { background: rgba(107,140,255,0.1); color: var(--blue); }
+    .reply-vote-btn.liked { color: var(--blue); }
+    .reply-reply-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 12px; font-weight: 600; color: #aaa;
+      font-family: inherit; padding: 4px 8px; border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .reply-reply-btn:hover { background: rgba(107,140,255,0.1); color: var(--blue); }
+
+    /* Inline reply box inside thread */
+    .inline-reply-box {
+      display: none; margin-top: 10px;
+      background: var(--light-bg); border-radius: 12px; padding: 12px;
+    }
+    .inline-reply-box.open { display: block; }
+    .inline-textarea {
+      width: 100%; min-height: 70px; border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 10px 12px; font-family: inherit;
+      font-size: 13px; color: var(--text-main); resize: vertical;
+      outline: none; background: #fff;
+      transition: border-color 0.2s;
+    }
+    .inline-textarea:focus { border-color: var(--blue); }
+    .inline-reply-actions {
+      display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;
+    }
+    .btn-cancel-reply {
+      background: none; border: 1.5px solid var(--border); color: #666;
+      font-family: inherit; font-size: 12px; font-weight: 600;
+      padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .btn-cancel-reply:hover { border-color: #aaa; }
+    .btn-send-reply {
+      background: var(--dark); color: #fff; font-family: inherit;
+      font-size: 12px; font-weight: 600; padding: 6px 16px;
+      border-radius: 999px; border: none; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-send-reply:hover { background: var(--blue); }
+
+    /* ── NEW POST MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 500;
+      align-items: center; justify-content: center; padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 24px; padding: 36px;
+      width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto;
+      animation: slideUp 0.22s ease;
+    }
+    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .modal-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px;
+    }
+    .modal-head h2 { font-size: 20px; font-weight: 700; }
+    .modal-close {
+      background: var(--light-bg); border: none; width: 32px; height: 32px;
+      border-radius: 50%; cursor: pointer; font-size: 18px; color: #666;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: #eee; }
+
+    .form-group { margin-bottom: 18px; }
+    .form-label { font-size: 13px; font-weight: 600; color: #444; margin-bottom: 6px; display: block; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 11px 14px; font-family: inherit; font-size: 14px;
+      color: var(--text-main); outline: none; background: var(--light-bg);
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--blue); background: #fff;
+    }
+    .form-textarea { min-height: 140px; resize: vertical; }
+    .modal-submit {
+      width: 100%; background: linear-gradient(135deg, var(--blue), var(--pink));
+      color: #fff; font-family: inherit; font-size: 15px; font-weight: 700;
+      padding: 13px; border-radius: 12px; border: none; cursor: pointer;
+      margin-top: 4px; transition: opacity 0.2s, transform 0.2s;
+    }
+    .modal-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 32px; right: 24px;
+      background: var(--dark); color: #fff; font-size: 14px; font-weight: 600;
+      padding: 14px 22px; border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      z-index: 999; opacity: 0; transform: translateY(12px);
+      transition: opacity 0.3s, transform 0.3s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: #aaa;
+    }
+    .empty-state .emoji { font-size: 48px; margin-bottom: 14px; }
+    .empty-state p { font-size: 15px; }
+
+    @media (max-width: 600px) {
+      .detail-card { padding: 22px 18px; }
+      .detail-title { font-size: 19px; }
+      nav > a:not(.nav-cta) { display: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="dark-mode.css">
+  <script src="dark-mode.js"></script>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a class="logo" href="index.html">HyperSpace</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="discussion.html" class="active">Discussion</a>
+    <a href="leaderboard.html">Leaderboard</a>
+    <a href="authentication.html" class="nav-cta" id="nav-login-btn">Sign In</a>
+
+    <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
+      <div class="profile-avatar" id="profileAvatar">U</div>
+      <div class="profile-dropdown">
+        <div class="pd-info">
+          <div class="pd-name" id="pdName">User</div>
+          <div class="pd-role" id="pdRole">Member</div>
+        </div>
+        <a class="pd-item" href="profile.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </a>
+        <a class="pd-item" href="index.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          All Events
+        </a>
+        <a class="pd-item" href="leaderboard.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Leaderboard
+        </a>
+                <div class="pd-item" onclick="toggleDarkMode()" role="button" tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark Mode
+        </div>
+        <a href="#" class="pd-item danger" onclick="signOut()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </a> 
+      </div>
+    </button>
+  </nav>
+</header>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── NEW POST MODAL ── -->
+<div class="modal-overlay" id="newPostModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2>Create a Post</h2>
+      <button class="modal-close" id="closeModal">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="post-category">Category</label>
+      <select class="form-select" id="post-category">
+        <option value="experience">Past Experience</option>
+        <option value="upcoming">Upcoming Anticipation</option>
+        <option value="promote">Promote My Event</option>
+        <option value="general">General Discussion</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="post-title">Post Title</label>
+      <input class="form-input" id="post-title" type="text" placeholder="Give your post a catchy title…" maxlength="120" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="post-body">Your Post</label>
+      <textarea class="form-textarea" id="post-body" placeholder="Share your thoughts, experience, or event details…"></textarea>
+    </div>
+    <button class="modal-submit" id="submitPost">Publish Post</button>
+  </div>
+</div>
+
+<!-- ── MAIN CONTENT ── -->
+<main class="page-wrap">
+
+  <!-- LIST VIEW -->
+  <div id="list-view">
+    <div class="disc-header">
+      <div class="disc-title-block">
+        <h1>Community Discussion</h1>
+        <p>Share experiences, anticipate upcoming events, or promote your own.</p>
+      </div>
+      <button class="btn-new-post" id="openNewPost">＋ New Post</button>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All Posts</button>
+      <button class="filter-tab" data-filter="experience">Experiences</button>
+      <button class="filter-tab" data-filter="upcoming">Upcoming</button>
+      <button class="filter-tab" data-filter="promote">Promote</button>
+      <button class="filter-tab" data-filter="general">General</button>
+    </div>
+
+    <div class="post-list" id="postList"></div>
+  </div>
+
+  <!-- DETAIL VIEW -->
+  <div id="detail-view">
+    <button class="back-btn" id="backBtn">← Back to Discussion</button>
+    <div id="detail-content"></div>
+  </div>
+
+</main>
+
+<script>
+/* =============================================
+   DATA
+   ============================================= */
+let posts = [
+  {
+    id: 1,
+    category: 'experience',
+    title: 'The CyberStorm CTF 2025 was absolutely insane — here\'s my full recap 🔥',
+    author: 'k4l1_ghost',
+    time: '2 days ago',
+    votes: 142,
+    body: `Just got back from CyberStorm CTF 2025 and I have to say — this was my best hackathon weekend ever.\n\nWe started on Friday evening with a recon challenge that had everyone stumped for hours. My team eventually cracked it using a pretty obscure DNS enumeration trick that I only knew from this community's resources.\n\nThe SQLi challenge in the "Web Warfare" track was diabolically fun. Blind boolean-based injection with a WAF that blocked most common payloads. Took us 6 hours but we finally popped a shell at 2 AM. The entire room just erupted.\n\nOverall we placed 4th out of 200+ teams. Would love to hear from others who participated! What was your favorite challenge?`,
+    replies: [
+      { id: 101, author: 'r00t_raider', time: '1 day ago', body: 'Dude, that DNS challenge nearly broke me. Our team spent 4 hours on it before we even found the subdomain.',  votes: 38, nested: [] },
+      { id: 102, author: 'zer0_day_zara', time: '1 day ago', body: 'Wait, you placed 4th?! That\'s incredible! We were the team that placed 7th haha. The SQLi challenge was brutal — we ended up going down the XSS rabbit hole for way too long.', votes: 21, nested: [
+        { id: 1021, author: 'k4l1_ghost', time: '20 hours ago', body: 'Oh no way, shoutout to team at 7th! The XSS rabbit hole was a classic misdirect. GG to you guys!', votes: 14, badge: 'op' }
+      ]},
+      { id: 103, author: 'hypermod_raj', time: '22 hours ago', body: 'Great write-up! We\'re planning to host a post-CTF discussion session next week. Keep an eye on the events board.', votes: 19, badge: 'mod', nested: [] }
+    ]
+  },
+  {
+    id: 2,
+    category: 'upcoming',
+    title: 'AI Builders Summit v3 is coming — and I am HYPED 🤖',
+    author: 'neural_nova',
+    time: '3 days ago',
+    votes: 89,
+    body: `The lineup for AI Builders Summit v3 just dropped and honestly I can barely contain my excitement.\n\nSession highlights:\n• "LLMs in Production" by a senior Anthropic engineer\n• Hands-on RAG pipeline workshop\n• Panel: "Is AGI closer than we think?"\n• Live model fine-tuning competition\n\nI attended v2 last year and it completely changed my understanding of transformer architectures. The networking opportunities were top tier — I ended up connecting with three engineers who eventually helped me land my internship.\n\nWho else is registering? Let's coordinate a HyperSpace meetup at the event!`,
+    replies: [
+      { id: 201, author: 'llm_luminary', time: '2 days ago', body: 'Already registered! The RAG pipeline workshop is the one I\'m most excited for. Been struggling with chunking strategies at work.', votes: 27, nested: [] },
+      { id: 202, author: 'vector_vex', time: '2 days ago', body: 'Count me in! Should we create a Discord channel for HyperSpace attendees?', votes: 15, nested: [
+        { id: 2021, author: 'neural_nova', time: '1 day ago', body: 'Great idea! I\'ll set one up and post the invite link in the events section.', votes: 11, badge: 'op' }
+      ]}
+    ]
+  },
+  {
+    id: 3,
+    category: 'promote',
+    title: '📢 Announcing: MicroHack — A 12-Hour Beginner CTF on March 15th',
+    author: 'sec_sensei_suki',
+    time: '4 days ago',
+    votes: 76,
+    body: `Hey HyperSpace! I'm one of the organizers for MicroHack, a beginner-friendly 12-hour CTF designed specifically for people who have never competed before.\n\n📅 Date: March 15, 2026\n⏰ Time: 9 AM – 9 PM IST\n🌐 Format: Online (Jeopardy-style)\n📚 Tracks: Web, Crypto, OSINT, Misc\n🏆 Prizes: Certificates, merch, and HyperSpace leaderboard points!\n\nWe designed every challenge to be solvable with a beginner's toolkit and a Google search. No prior CTF experience needed.\n\nRegistrations are open now — link in the comments. Would love to see the HyperSpace community represent! 🔥`,
+    replies: [
+      { id: 301, author: 'firsthack_felix', time: '3 days ago', body: 'This is exactly what I needed. I\'ve been wanting to get into CTFs but every event I look at feels way too advanced. Signed up!', votes: 34, nested: [] },
+      { id: 302, author: 'sec_sensei_suki', time: '3 days ago', body: 'Registration link: hyperspace.io/microhack-register — see you there! 🚀', votes: 22, badge: 'op', nested: [] },
+      { id: 303, author: 'hypermod_raj', time: '2 days ago', body: 'Pinning this! Great initiative. We\'ll also link this in the event board.', votes: 18, badge: 'mod', nested: [] }
+    ]
+  }
+];
+
+const STORAGE_KEY = 'hs_discussions';
+
+function savePosts() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+}
+
+function initDiscussions() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      posts = JSON.parse(saved);
+    } catch (e) {
+      console.error("Failed to parse saved discussions", e);
+    }
+  } else {
+    // First time? Save initial mock data
+    savePosts();
+  }
+}
+
+initDiscussions();
+
+let currentFilter = 'all';
+let currentPostId = null;
+
+/* =============================================
+   UTILITIES
+   ============================================= */
+function getCategoryLabel(cat) {
+  const map = {
+    experience: '📝 Experience',
+    upcoming:   '🚀 Upcoming',
+    promote:    '📢 Promote',
+    general:    '💬 General'
+  };
+  return map[cat] || cat;
+}
+
+function getCategoryClass(cat) {
+  const map = { experience: 'tag-experience', upcoming: 'tag-upcoming', promote: 'tag-promote', general: 'tag-general' };
+  return map[cat] || '';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function getUser() {
+  try {
+    return JSON.parse(sessionStorage.getItem('hs_user')) || JSON.parse(localStorage.getItem('hs_user'));
+  } catch {
+    return null;
+  }
+}
+
+function countReplies(post) {
+  if (!post || !post.replies) return 0;
+  let count = post.replies.length;
+  post.replies.forEach(r => {
+    if (r.nested) count += r.nested.length;
+  });
+  return count;
+}
+
+function isMongoId(id) {
+  if (!id) return false;
+  return /^[0-9a-fA-F]{24}$/.test(String(id));
+}
+
+/* =============================================
+   RENDER LIST
+   ============================================= */
+function renderList() {
+  const filtered = currentFilter === 'all' ? posts : posts.filter(p => p.category === currentFilter);
+  const container = document.getElementById('postList');
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-state"><div class="emoji">🔍</div><p>No posts yet in this category. Be the first!</p></div>`;
+    return;
+  }
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+
+  container.innerHTML = filtered.map(post => {
+    const hasVoted = post.voters && post.voters.includes(userName);
+    return `
+    <div class="post-card" onclick="openPost('${post.id}')">
+      <div class="post-vote" onclick="event.stopPropagation()">
+        <button class="vote-btn up ${hasVoted ? 'voted' : ''}" onclick="votePost('${post.id}', 1)" title="Upvote">▲</button>
+        <span class="vote-count" id="pv-${post.id}">${post.votes}</span>
+        <button class="vote-btn down ${hasVoted ? 'voted' : ''}" onclick="votePost('${post.id}', -1)" title="Downvote">▼</button>
+      </div>
+      <div class="post-main">
+        <div class="post-meta">
+          <span class="post-tag ${getCategoryClass(post.category)}">${getCategoryLabel(post.category)}</span>
+          <span class="post-author">by <span>${post.author}</span></span>
+          <span class="post-time">· ${post.time}</span>
+        </div>
+        <div class="post-title">${post.title}</div>
+        <div class="post-excerpt">${post.body.replace(/\n/g,' ')}</div>
+        <div class="post-footer">
+          <span class="post-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            ${countReplies(post)} replies
+          </span>
+        </div>
+      </div>
+    </div>
+    `;
+  }).join('');
+}
+
+function countReplies(post) {
+  return post.replies.reduce((acc, r) => acc + 1 + (r.nested ? r.nested.length : 0), 0);
+}
+
+/* =============================================
+   VOTE ON LIST
+   ============================================= */
+function votePost(id, dir) {
+  const post = posts.find(p => String(p.id) === String(id));
+  if (!post) return;
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+
+  if (!post.voters) post.voters = [];
+  if (post.voters.includes(userName)) {
+    showToast("You've already voted on this post!");
+    return;
+  }
+
+  post.votes += dir;
+  post.voters.push(userName);
+  savePosts();
+  
+  const el = document.getElementById(`pv-${id}`);
+  if (el) el.textContent = post.votes;
+}
+
+/* =============================================
+   OPEN POST DETAIL
+   ============================================= */
+function openPost(id) {
+  const post = posts.find(p => String(p.id) === String(id));
+  if (!post) return;
+  currentPostId = id;
+
+  document.getElementById('list-view').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+  const userInitials = userName.substring(0, 2).toUpperCase();
+
+  const repliesHtml = renderReplies(post.replies, post.id);
+
+  const hasVoted = post.voters && post.voters.includes(userName);
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-card">
+      <div class="detail-meta">
+        <span class="post-tag ${getCategoryClass(post.category)}">${getCategoryLabel(post.category)}</span>
+        <span class="post-author">by <span>${post.author}</span></span>
+        <span class="post-time">· ${post.time}</span>
+      </div>
+      <h1 class="detail-title">${post.title}</h1>
+      <div class="detail-body">${post.body}</div>
+      <div class="detail-actions">
+        <button class="action-btn ${hasVoted ? 'voted-up' : ''}" id="detail-vote-btn-${id}" onclick="detailVote('${id}')">
+          ▲ Upvote &nbsp;<strong id="detail-vote-count-${id}">${post.votes}</strong>
+        </button>
+        <span class="action-btn" style="cursor:default">
+          💬 ${countReplies(post)} Replies
+        </span>
+      </div>
+    </div>
+
+    <div class="replies-section">
+      <div class="replies-header">
+        Replies <span class="replies-count-badge">${countReplies(post)}</span>
+      </div>
+
+      <div class="reply-compose">
+        <div class="reply-compose-top">
+          <div class="mini-avatar">${userInitials}</div>
+          <span>Replying as <strong>${userName}</strong></span>
+        </div>
+        <textarea class="reply-textarea" id="main-reply-textarea" placeholder="Share your thoughts…"></textarea>
+        <div class="reply-submit-row">
+          <button class="btn-reply-submit" onclick="submitMainReply('${id}')">Post Reply</button>
+        </div>
+      </div>
+
+      <div class="reply-thread" id="reply-thread-${id}">
+        ${repliesHtml}
+      </div>
+    </div>
+  `;
+}
+
+function renderReplies(replies, postId) {
+  return replies.map(r => renderReplyItem(r, postId, false)).join('');
+}
+
+function renderReplyItem(r, postId, isNested) {
+  const replyId = r._id || r.id;
+  const badgeHtml = r.badge === 'op' ? '<span class="reply-role-badge badge-op">OP</span>'
+    : r.badge === 'mod' ? '<span class="reply-role-badge badge-mod">MOD</span>' : '';
+
+  const nestedHtml = (r.nested && r.nested.length)
+    ? r.nested.map(n => renderReplyItem(n, postId, true)).join('') : '';
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+  const hasVoted = r.voters && r.voters.includes(userName);
+
+  return `
+    <div>
+      <div class="reply-item ${isNested ? 'nested' : ''}" id="reply-${replyId}">
+        <div class="reply-top">
+          <span class="reply-author">${r.author}</span>
+          ${badgeHtml}
+          <span class="reply-time">· ${r.time || 'just now'}</span>
+        </div>
+        <div class="reply-body">${r.body}</div>
+        <div class="reply-actions">
+          <button class="reply-vote-btn ${hasVoted ? 'liked' : ''}" onclick="likeReply(this, '${replyId}', '${postId}')" id="rl-${replyId}">
+            ▲ <span id="rv-${replyId}">${r.votes}</span>
+          </button>
+          ${!isNested ? `<button class="reply-reply-btn" onclick="toggleInlineReply('${replyId}', '${postId}')">↩ Reply</button>` : ''}
+        </div>
+        ${!isNested ? `
+        <div class="inline-reply-box" id="irb-${replyId}">
+          <textarea class="inline-textarea" id="irt-${replyId}" placeholder="Write a reply…"></textarea>
+          <div class="inline-reply-actions">
+            <button class="btn-cancel-reply" onclick="toggleInlineReply('${replyId}', '${postId}')">Cancel</button>
+            <button class="btn-send-reply" onclick="submitNestedReply('${replyId}', '${postId}')">Reply</button>
+          </div>
+        </div>` : ''}
+      </div>
+      ${nestedHtml}
+    </div>
+  `;
+}
+
+/* =============================================
+   VOTE DETAIL
+   ============================================= */
+function detailVote(postId) {
+  const post = posts.find(p => String(p.id) === String(postId));
+  if (!post) return;
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+
+  if (!post.voters) post.voters = [];
+  if (post.voters.includes(userName)) {
+    showToast("You've already voted!");
+    return;
+  }
+
+  post.votes++;
+  post.voters.push(userName);
+  savePosts();
+  
+  const el = document.getElementById(`detail-vote-count-${postId}`);
+  if (el) el.textContent = post.votes;
+  document.getElementById(`detail-vote-btn-${postId}`).classList.add('voted-up');
+  showToast('Upvoted!');
+}
+
+function likeReply(btn, replyId, postId) {
+  const post = posts.find(p => String(p.id) === String(postId));
+  if (!post) return;
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+
+  function findR(list) {
+    for (const r of list) {
+      const rid = r._id || r.id;
+      if (String(rid) === String(replyId)) {
+        if (!r.voters) r.voters = [];
+        if (r.voters.includes(userName)) return { alreadyVoted: true };
+        r.votes++;
+        r.voters.push(userName);
+        return r;
+      }
+      if (r.nested) { const found = findR(r.nested); if (found) return found; }
+    }
+    return null;
+  }
+
+  const result = findR(post.replies);
+  if (result === null) return;
+  
+  if (result.alreadyVoted) {
+    showToast("Already liked!");
+    return;
+  }
+
+  savePosts();
+  const countEl = document.getElementById(`rv-${replyId}`);
+  if (countEl) countEl.textContent = result.votes;
+  btn.classList.add('liked');
+}
+
+/* =============================================
+   REPLY SUBMISSION
+   ============================================= */
+function submitMainReply(postId) {
+  const ta = document.getElementById('main-reply-textarea');
+  const text = ta.value.trim();
+  if (!text) return;
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+
+  const post = posts.find(p => String(p.id) === String(postId));
+  if (post) {
+    post.replies.push({
+      id: Date.now(),
+      author: userName,
+      time: "just now",
+      body: text,
+      votes: 0,
+      voters: [],
+      nested: []
+    });
+    savePosts();
+    ta.value = '';
+    openPost(postId);
+    showToast("Reply posted!");
+  }
+}
+
+function toggleInlineReply(replyId, postId) {
+  const box = document.getElementById(`irb-${replyId}`);
+  if (!box) return;
+  box.classList.toggle('open');
+}
+
+function submitNestedReply(replyId, postId) {
+  const ta = document.getElementById(`irt-${replyId}`);
+  const text = ta.value.trim();
+  if (!text) return;
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+
+  const post = posts.find(p => String(p.id) === String(postId));
+  if (post) {
+    const topReply = post.replies.find(r => String(r._id || r.id) === String(replyId));
+    if (topReply) {
+      if (!topReply.nested) topReply.nested = [];
+      topReply.nested.push({
+        id: Date.now(),
+        author: userName,
+        time: "just now",
+        body: text,
+        votes: 0,
+        voters: []
+      });
+      savePosts();
+      showToast("Reply posted!");
+      openPost(postId);
+    }
+  }
+}
+
+function refreshThread(post) {
+  const thread = document.getElementById(`reply-thread-${post.id}`);
+  if (thread) thread.innerHTML = renderReplies(post.replies, post.id);
+  // update reply count badge
+  const badge = document.querySelector('.replies-count-badge');
+  if (badge) badge.textContent = countReplies(post);
+}
+
+/* =============================================
+   BACK BUTTON
+   ============================================= */
+document.getElementById('backBtn').addEventListener('click', () => {
+  document.getElementById('detail-view').style.display = 'none';
+  document.getElementById('list-view').style.display = 'block';
+  currentPostId = null;
+  renderList();
+  window.scrollTo(0, 0);
+});
+
+/* =============================================
+   FILTER TABS
+   ============================================= */
+document.querySelectorAll('.filter-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderList();
+  });
+});
+
+/* =============================================
+   CLEAR POST CARDS (Console Only)
+   ============================================= */
+function clearAllPosts() {
+  localStorage.removeItem('hs_discussions');   // remove saved posts
+  posts = [
+  {
+    id: 1,
+    category: 'experience',
+    title: 'The CyberStorm CTF 2025 was absolutely insane — here\'s my full recap 🔥',
+    author: 'k4l1_ghost',
+    time: '2 days ago',
+    votes: 142,
+    body: `Just got back from CyberStorm CTF 2025 and I have to say — this was my best hackathon weekend ever.\n\nWe started on Friday evening with a recon challenge that had everyone stumped for hours. My team eventually cracked it using a pretty obscure DNS enumeration trick that I only knew from this community's resources.\n\nThe SQLi challenge in the "Web Warfare" track was diabolically fun. Blind boolean-based injection with a WAF that blocked most common payloads. Took us 6 hours but we finally popped a shell at 2 AM. The entire room just erupted.\n\nOverall we placed 4th out of 200+ teams. Would love to hear from others who participated! What was your favorite challenge?`,
+    replies: [
+      { id: 101, author: 'r00t_raider', time: '1 day ago', body: 'Dude, that DNS challenge nearly broke me. Our team spent 4 hours on it before we even found the subdomain.',  votes: 38, nested: [] },
+      { id: 102, author: 'zer0_day_zara', time: '1 day ago', body: 'Wait, you placed 4th?! That\'s incredible! We were the team that placed 7th haha. The SQLi challenge was brutal — we ended up going down the XSS rabbit hole for way too long.', votes: 21, nested: [
+        { id: 1021, author: 'k4l1_ghost', time: '20 hours ago', body: 'Oh no way, shoutout to team at 7th! The XSS rabbit hole was a classic misdirect. GG to you guys!', votes: 14, badge: 'op' }
+      ]},
+      { id: 103, author: 'hypermod_raj', time: '22 hours ago', body: 'Great write-up! We\'re planning to host a post-CTF discussion session next week. Keep an eye on the events board.', votes: 19, badge: 'mod', nested: [] }
+    ]
+  },
+  {
+    id: 2,
+    category: 'upcoming',
+    title: 'AI Builders Summit v3 is coming — and I am HYPED 🤖',
+    author: 'neural_nova',
+    time: '3 days ago',
+    votes: 89,
+    body: `The lineup for AI Builders Summit v3 just dropped and honestly I can barely contain my excitement.\n\nSession highlights:\n• "LLMs in Production" by a senior Anthropic engineer\n• Hands-on RAG pipeline workshop\n• Panel: "Is AGI closer than we think?"\n• Live model fine-tuning competition\n\nI attended v2 last year and it completely changed my understanding of transformer architectures. The networking opportunities were top tier — I ended up connecting with three engineers who eventually helped me land my internship.\n\nWho else is registering? Let's coordinate a HyperSpace meetup at the event!`,
+    replies: [
+      { id: 201, author: 'llm_luminary', time: '2 days ago', body: 'Already registered! The RAG pipeline workshop is the one I\'m most excited for. Been struggling with chunking strategies at work.', votes: 27, nested: [] },
+      { id: 202, author: 'vector_vex', time: '2 days ago', body: 'Count me in! Should we create a Discord channel for HyperSpace attendees?', votes: 15, nested: [
+        { id: 2021, author: 'neural_nova', time: '1 day ago', body: 'Great idea! I\'ll set one up and post the invite link in the events section.', votes: 11, badge: 'op' }
+      ]}
+    ]
+  },
+  {
+    id: 3,
+    category: 'promote',
+    title: '📢 Announcing: MicroHack — A 12-Hour Beginner CTF on March 15th',
+    author: 'sec_sensei_suki',
+    time: '4 days ago',
+    votes: 76,
+    body: `Hey HyperSpace! I'm one of the organizers for MicroHack, a beginner-friendly 12-hour CTF designed specifically for people who have never competed before.\n\n📅 Date: March 15, 2026\n⏰ Time: 9 AM – 9 PM IST\n🌐 Format: Online (Jeopardy-style)\n📚 Tracks: Web, Crypto, OSINT, Misc\n🏆 Prizes: Certificates, merch, and HyperSpace leaderboard points!\n\nWe designed every challenge to be solvable with a beginner's toolkit and a Google search. No prior CTF experience needed.\n\nRegistrations are open now — link in the comments. Would love to see the HyperSpace community represent! 🔥`,
+    replies: [
+      { id: 301, author: 'firsthack_felix', time: '3 days ago', body: 'This is exactly what I needed. I\'ve been wanting to get into CTFs but every event I look at feels way too advanced. Signed up!', votes: 34, nested: [] },
+      { id: 302, author: 'sec_sensei_suki', time: '3 days ago', body: 'Registration link: hyperspace.io/microhack-register — see you there! 🚀', votes: 22, badge: 'op', nested: [] },
+      { id: 303, author: 'hypermod_raj', time: '2 days ago', body: 'Pinning this! Great initiative. We\'ll also link this in the event board.', votes: 18, badge: 'mod', nested: [] }
+    ]
+  }
+];                                  // clear in-memory array
+  renderList();                                // re-render UI
+  showToast("🗑️ All posts cleared!");
+}
+
+/* =============================================
+   NEW POST MODAL
+   ============================================= */
+document.getElementById('openNewPost').addEventListener('click', () => {
+  document.getElementById('newPostModal').classList.add('open');
+});
+document.getElementById('closeModal').addEventListener('click', () => {
+  document.getElementById('newPostModal').classList.remove('open');
+});
+document.getElementById('newPostModal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+document.getElementById('submitPost').addEventListener('click', () => {
+  const title  = document.getElementById('post-title').value.trim();
+  const body   = document.getElementById('post-body').value.trim();
+  const cat    = document.getElementById('post-category').value;
+
+  if (!title) return showToast('✏️ Please add a title!');
+  if (!body)  return showToast('✏️ Please write some content!');
+
+  const user = getUser();
+  const userName = user ? user.name : "Yuvaraja Kumaran M";
+
+  const newPost = {
+    id: Date.now(),
+    category: cat,
+    title: title,
+    author: userName,
+    time: "just now",
+    votes: 0,
+    voters: [],
+    body: body,
+    replies: []
+  };
+
+  posts.unshift(newPost);
+  savePosts();
+
+  showToast("Stored in cache");
+
+  document.getElementById('newPostModal').classList.remove('open');
+  document.getElementById('post-title').value = '';
+  document.getElementById('post-body').value = '';
+
+  renderList();
+});
+
+/* =============================================
+   AUTH / SESSION
+   ============================================= */
+(function initSession() {
+  const user = getUser();
+  const loginBtn = document.getElementById('nav-login-btn');
+  const profileBtn = document.getElementById('profileBtn');
+  if (user) {
+    loginBtn.style.display = 'none';
+    profileBtn.style.display = 'flex';
+    document.getElementById('pdName').textContent = user.name || 'User';
+    document.getElementById('pdRole').textContent = user.role || 'Member';
+    const initials = user.name
+        .split(' ')
+        .map(w => w[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
+    document.getElementById('profileAvatar').textContent = initials;
+    console.log(document.getElementById('profileAvatar').textContent = initials);
+  }
+})();
+
+document.getElementById('profileBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('profileBtn').classList.toggle('open');
+});
+document.addEventListener('click', () => {
+  document.getElementById('profileBtn').classList.remove('open');
+});
+
+function signOut() {
+  sessionStorage.removeItem('hs_user');
+  localStorage.removeItem('hs_user');
+  window.location.href = 'authentication.html';
+}
+
+/* =============================================
+   INIT
+   ============================================= */
+renderList();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,293 @@
+/* dark-mode.css */
+html.dark-mode body {
+  --light-bg: #0b0b12 !important;
+  --card-bg: #151520 !important;
+  --text-main: #f0f0f0 !important;
+  --text-sub: #a0a0a0 !important;
+  --dark: #ffffff !important;
+  background-color: var(--light-bg);
+  color: var(--text-main);
+}
+
+/* Base resets & backgrounds */
+html.dark-mode .auth-form-panel,
+html.dark-mode .post-card,
+html.dark-mode .detail-card,
+html.dark-mode .reply-compose,
+html.dark-mode .reply-item,
+html.dark-mode .modal-box,
+html.dark-mode .pillar-card,
+html.dark-mode .event-card,
+html.dark-mode .stat-item,
+html.dark-mode .motive-card,
+html.dark-mode .audience-box,
+html.dark-mode .profile-dropdown,
+html.dark-mode .inline-reply-box,
+html.dark-mode .chat-body,
+html.dark-mode .chat-msg.bot,
+html.dark-mode .chat-input-area,
+html.dark-mode .chat-input,
+html.dark-mode .form-input, html.dark-mode .form-select, html.dark-mode .form-textarea,
+html.dark-mode .reply-textarea,
+html.dark-mode .inline-textarea,
+html.dark-mode #stats, html.dark-mode #audience, html.dark-mode #pillars, html.dark-mode #events {
+  background: var(--card-bg) !important;
+  border-color: #2b2b3a !important;
+  color: var(--text-main) !important;
+}
+
+/* Nav & header */
+html.dark-mode header {
+  background: rgba(11, 11, 18, 0.92) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+html.dark-mode nav a { color: #ccc !important; }
+html.dark-mode nav a:hover { color: var(--blue) !important; }
+html.dark-mode .header-back { color: var(--text-sub) !important; }
+
+/* Inverts / Overrides */
+html.dark-mode .hero h1 { color: #fff !important; }
+html.dark-mode .pd-item { color: #ddd !important; }
+html.dark-mode .pd-item:hover { background: #222 !important; }
+html.dark-mode .pd-info { border-bottom: 1px solid #333 !important; }
+html.dark-mode .pd-name { color: #fff !important; }
+
+/* Buttons & labels */
+html.dark-mode .btn-secondary {
+  border-color: #666 !important;
+  color: #fff !important;
+}
+html.dark-mode .btn-secondary:hover {
+  border-color: var(--blue) !important;
+  color: var(--blue) !important;
+}
+html.dark-mode .post-title,
+html.dark-mode .detail-title,
+html.dark-mode .reply-author,
+html.dark-mode .form-label,
+html.dark-mode .form-heading,
+html.dark-mode .brand-title,
+html.dark-mode .section-title {
+  color: #fff !important;
+}
+html.dark-mode .post-excerpt,
+html.dark-mode .detail-body,
+html.dark-mode .reply-body {
+  color: #ccc !important;
+}
+
+html.dark-mode .action-btn, html.dark-mode .vote-btn, html.dark-mode .filter-tab, html.dark-mode .reply-vote-btn, html.dark-mode .reply-reply-btn {
+  background: #1e1e2c !important;
+  color: #aaa !important;
+  border-color: #333 !important;
+}
+html.dark-mode .action-btn:hover, html.dark-mode .vote-btn:hover, html.dark-mode .filter-tab:hover, html.dark-mode .filter-tab.active, html.dark-mode .reply-vote-btn:hover, html.dark-mode .reply-reply-btn:hover {
+  background: rgba(107,140,255,0.15) !important;
+  color: var(--blue) !important;
+}
+html.dark-mode .filter-tab.active {
+    background: var(--blue) !important;
+    color: #fff !important;
+}
+
+/* Misc overrides */
+html.dark-mode .social-btn {
+  background: var(--card-bg) !important;
+  color: #fff !important;
+  border-color: #333 !important;
+}
+html.dark-mode .ticker-wrapper {
+  background: #06060a !important;
+}
+
+/* ── HERO SECTION ── */
+html.dark-mode .hero {
+  background: #0b0b12 !important;
+}
+html.dark-mode .hero h1 {
+  color: #f0f0f0 !important;
+}
+html.dark-mode .hero h1 span {
+  color: #888 !important;
+}
+html.dark-mode .hero-sub {
+  color: #a0a0a0 !important;
+}
+html.dark-mode .hero-badge {
+  background: rgba(107,140,255,0.12) !important;
+  border-color: rgba(107,140,255,0.25) !important;
+}
+html.dark-mode .blob {
+  opacity: 0.06 !important;
+}
+
+/* ── MOTIVE SECTION (second section) ── */
+html.dark-mode #motive {
+  background: #0e0e1a !important;
+}
+html.dark-mode #motive .section-title {
+  color: #f0f0f0 !important;
+}
+html.dark-mode #motive .section-desc {
+  color: rgba(200,200,200,0.65) !important;
+}
+html.dark-mode #motive .motive-card {
+  background: rgba(255,255,255,0.03) !important;
+  border-color: rgba(255,255,255,0.07) !important;
+}
+html.dark-mode #motive .motive-card h3 {
+  color: #f0f0f0 !important;
+}
+html.dark-mode #motive .motive-card p {
+  color: rgba(200,200,200,0.55) !important;
+}
+
+/* ── CTA SECTION ── */
+html.dark-mode #cta {
+  background: #0e0e1a !important;
+}
+html.dark-mode #cta h2 {
+  color: #f0f0f0 !important;
+}
+html.dark-mode #cta p {
+  color: rgba(200,200,200,0.65) !important;
+}
+html.dark-mode #cta .cta-blob {
+  opacity: 0.04 !important;
+}
+
+/* ── FOOTER ── */
+html.dark-mode footer {
+  background: #0b0b12 !important;
+}
+html.dark-mode footer .footer-logo {
+  color: #f0f0f0 !important;
+}
+html.dark-mode footer .copy,
+html.dark-mode footer .footer-links a {
+  color: rgba(200,200,200,0.55) !important;
+}
+html.dark-mode footer .footer-links a:hover {
+  color: #f0f0f0 !important;
+}
+
+/* ── BUTTON FIXES ── */
+html.dark-mode .nav-cta,
+html.dark-mode .btn-primary:not(#cta .btn-primary) {
+  background: #f0f0f0 !important;
+  color: #111 !important;
+}
+html.dark-mode .nav-cta:hover,
+html.dark-mode .btn-primary:not(#cta .btn-primary):hover {
+  background: var(--blue) !important;
+  color: #fff !important;
+}
+
+/* ── LEADERBOARD OVERRIDES ── */
+html.dark-mode .lb-hero { background: var(--card-bg) !important; }
+html.dark-mode .lb-tabs,
+html.dark-mode .lb-search input,
+html.dark-mode .lb-filter,
+html.dark-mode .lb-row,
+html.dark-mode .hint-card,
+html.dark-mode .my-rank-card {
+  background: var(--card-bg) !important;
+  border-color: #2b2b3a !important;
+  color: var(--text-main) !important;
+}
+html.dark-mode .lb-tab.active { background: #fff !important; color: #111 !important; }
+html.dark-mode .lb-tab.active .tab-count { background: #eee !important; color: #888 !important; }
+
+/* ── PROFILE OVERRIDES ── */
+html.dark-mode .profile-hero { background: var(--card-bg) !important; }
+html.dark-mode .sidebar-card,
+html.dark-mode .panel-card,
+html.dark-mode .event-row,
+html.dark-mode .info-chip,
+html.dark-mode .stats-strip,
+html.dark-mode .strip-stat {
+  background: var(--card-bg) !important;
+  border-color: #2b2b3a !important;
+  color: var(--text-main) !important;
+}
+
+/* ── EVENTS OVERRIDES ── */
+html.dark-mode .page-header { background: var(--card-bg) !important; }
+html.dark-mode .filter-btn,
+html.dark-mode .type-filter-btn,
+html.dark-mode .search-input,
+html.dark-mode .sort-select,
+html.dark-mode .modal,
+html.dark-mode .team-card,
+html.dark-mode .mgmt-row {
+  background: var(--card-bg) !important;
+  border-color: #2b2b3a !important;
+  color: var(--text-main) !important;
+}
+
+/* ── WORKSHOP DETAIL OVERRIDES ── */
+html.dark-mode .workshop-hero { background: var(--card-bg) !important; }
+html.dark-mode .highlight-card,
+html.dark-mode .instructor-card,
+html.dark-mode .register-card {
+  background: var(--card-bg) !important;
+  border-color: #2b2b3a !important;
+}
+html.dark-mode .mc-btn { background: var(--card-bg) !important; border-color: #2b2b3a !important; }
+html.dark-mode .mc-btn:hover { background: #222 !important; border-color: var(--blue) !important; }
+html.dark-mode .member-section { border-color: #2b2b3a !important; }
+
+/* ── AUTH PAGES OVERRIDES ── */
+html.dark-mode .auth-form-panel { background: #0d0d14 !important; color: #fff !important; }
+html.dark-mode .auth-brand { background: #09090e !important; }
+html.dark-mode main { background: #0d0d14 !important; }
+html.dark-mode header { background: rgba(13, 13, 20, 0.92) !important; border-bottom: 1px solid rgba(255,255,255,0.06) !important; }
+
+/* Keep title span blue/pink instead of inverting */
+html.dark-mode .brand-title span { color: var(--blue); }
+html.dark-mode .brand-eyebrow { color: var(--blue); }
+html.dark-mode .btn-submit { color: #000000 !important; }
+html.dark-mode .form-heading { color: #fff !important; }
+html.dark-mode .form-sub { color: #aaa !important; }
+
+/* Social Buttons */
+html.dark-mode .social-btn { 
+  background: #14141d !important; 
+  border-color: #2b2b3a !important; 
+  color: #fff !important; 
+}
+html.dark-mode .social-btn:hover {
+  background: #222 !important;
+  border-color: var(--blue) !important;
+}
+
+html.dark-mode .divider { color: #888 !important; }
+html.dark-mode .divider::before,
+html.dark-mode .divider::after {
+  background: #2b2b3a !important;
+}
+
+/* Fields */
+html.dark-mode .field label { color: #f0f0f0 !important; }
+html.dark-mode .field input { 
+  background: #14141d !important;
+  border-color: #2b2b3a !important; 
+  color: #fff !important; 
+}
+html.dark-mode .field input:focus {
+  border-color: var(--blue) !important;
+  background: #1a1a24 !important;
+}
+html.dark-mode .pw-toggle { color: #888 !important; }
+html.dark-mode .pw-toggle:hover { color: var(--blue) !important; }
+html.dark-mode .header-back { color: #aaa !important; }
+html.dark-mode .header-back:hover { color: var(--blue) !important; }
+
+/* Terms / Checkbox */
+html.dark-mode .remember { color: #aaa !important; }
+html.dark-mode .terms { color: #888 !important; }
+
+html.dark-mode .toast.success,
+html.dark-mode .toast.error { 
+  background: #14141d !important; 
+}

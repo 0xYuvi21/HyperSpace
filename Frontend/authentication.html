@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sign in to HyperSpace — The AI × Cyber student community platform." />
+  <title>Sign In — HyperSpace</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --blue:     #6b8cff;
+      --pink:     #ff6b9d;
+      --purple:   #a78bff;
+      --dark:     #0d0d14;
+      --light-bg: #f8f9fb;
+      --card-bg:  #ffffff;
+      --border:   #e4e6ed;
+      --text:     #111;
+      --sub:      #666;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 16px;
+      background: rgba(248,249,251,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+
+    .header-back {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--sub);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .header-back:hover { color: var(--blue); }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 68px);
+    }
+
+    /* ── LEFT PANEL (Brand) ── */
+    .auth-brand {
+      background: var(--dark);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 8%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #brand-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .brand-content { position: relative; z-index: 1; }
+
+    .brand-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 20px;
+    }
+
+    .brand-title {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+    }
+
+    .brand-title span { color: var(--blue); }
+
+    .brand-desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.7;
+      max-width: 360px;
+      font-weight: 300;
+      margin-bottom: 40px;
+    }
+
+    .brand-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .bstat .num {
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .bstat .lbl {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* ── RIGHT PANEL (Form) ── */
+    .auth-form-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 8%;
+      background: #fff;
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .form-heading {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .form-sub {
+      font-size: 14px;
+      color: var(--sub);
+      margin-bottom: 32px;
+    }
+
+    .form-sub a {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Social buttons */
+    .social-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      background: #fff;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+
+    .social-btn:hover {
+      border-color: var(--blue);
+      background: rgba(107,140,255,0.04);
+      transform: translateY(-2px);
+    }
+
+    .social-btn svg { flex-shrink: 0; }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      color: #bbb;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Form fields */
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #333;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--light-bg);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input:focus {
+      border-color: var(--blue);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(107,140,255,0.12);
+    }
+
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .field-row label { margin-bottom: 0; }
+
+    .forgot {
+      font-size: 12px;
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .forgot:hover { text-decoration: underline; }
+
+    /* Password wrapper */
+    .pw-wrap {
+      position: relative;
+    }
+
+    .pw-wrap input { padding-right: 44px; }
+
+    .pw-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #aaa;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+
+    .pw-toggle:hover { color: var(--blue); }
+
+    /* Remember me */
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--sub);
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    .remember input[type="checkbox"] { accent-color: var(--blue); width: 15px; height: 15px; cursor: pointer; }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--dark);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.15s;
+      margin-bottom: 20px;
+    }
+
+    .btn-submit:hover {
+      background: var(--blue);
+      transform: translateY(-2px);
+    }
+
+    /* Terms */
+    .terms {
+      font-size: 12px;
+      color: #aaa;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .terms a { color: var(--sub); text-decoration: underline; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 800px) {
+      main { grid-template-columns: 1fr; }
+      .auth-brand { display: none; }
+      .auth-form-panel { padding: 40px 6%; }
+    }
+
+    /* ── AUTH FEEDBACK ── */
+    .field-error {
+      font-size: 12px;
+      color: #e85555;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .field input.invalid {
+      border-color: #e85555;
+      box-shadow: 0 0 0 3px rgba(232,85,85,0.1);
+    }
+
+    .field input.valid {
+      border-color: #3ecf8e;
+      box-shadow: 0 0 0 3px rgba(62,207,142,0.1);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 88px;
+      right: 24px;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .toast.success {
+      background: #0d0d14;
+      color: #3ecf8e;
+      border: 1px solid rgba(62,207,142,0.25);
+    }
+
+    .toast.error {
+      background: #0d0d14;
+      color: #ff6b6b;
+      border: 1px solid rgba(255,107,107,0.25);
+    }
+
+    /* Button loading state */
+    .btn-submit.loading {
+      opacity: 0.75;
+      cursor: not-allowed;
+      background: var(--blue);
+      pointer-events: none;
+    }
+
+    .btn-submit.loading::after {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+  <link rel="stylesheet" href="dark-mode.css">
+  <script src="dark-mode.js"></script>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <a href="index.html" class="logo">HyperSpace</a>
+  <div style="display:flex; align-items:center; gap:20px;">
+    <button onclick="toggleDarkMode()" style="background:none; border:none; cursor:pointer; color: #555; display:flex; align-items:center;" title="Toggle Dark Mode">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="index.html" class="header-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Home
+    </a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── LEFT: BRAND PANEL ── -->
+  <div class="auth-brand">
+    <canvas id="brand-canvas"></canvas>
+    <div class="brand-content">
+      <div class="brand-eyebrow">AI × Cyber Community</div>
+      <h1 class="brand-title">Build. Secure.<br><span>Lead.</span></h1>
+      <p class="brand-desc">
+        Join thousands of students building at the frontier of AI and Cybersecurity.
+        One platform for events, teams, leaderboards, and knowledge sharing.
+      </p>
+      <div class="brand-stats">
+        <div class="bstat">
+          <div class="num">2K+</div>
+          <div class="lbl">Active Members</div>
+        </div>
+        <div class="bstat">
+          <div class="num">48+</div>
+          <div class="lbl">Events Hosted</div>
+        </div>
+        <div class="bstat">
+          <div class="num">15+</div>
+          <div class="lbl">Chapters</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT: FORM PANEL ── -->
+  <div class="auth-form-panel">
+    <div class="form-box">
+
+      <h2 class="form-heading">Welcome to HyperSpace</h2>
+      <p class="form-sub">Don't have an account? <a href="signup.html">Sign up free</a></p>
+
+      <!-- Social Auth -->
+      <div class="social-row">
+        <!-- Google -->
+        <a href="#" class="social-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google
+        </a>
+        <!-- GitHub -->
+        <a href="#" class="social-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <!-- Microsoft -->
+        <a href="#" class="social-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="13" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="13" width="10" height="10" fill="#00A4EF"/><rect x="13" y="13" width="10" height="10" fill="#FFB900"/></svg>
+          Microsoft
+        </a>
+      </div>
+
+      <div class="divider">or continue with email</div>
+
+      <!-- Email/Password Form -->
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="field" id="field-email">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@university.edu" autocomplete="email" />
+          <div class="field-error" id="err-email"></div>
+        </div>
+
+        <div class="field">
+          <div class="field-row">
+            <label for="password">Password</label>
+            <a href="#" class="forgot">Forgot password?</a>
+          </div>
+          <div class="pw-wrap">
+            <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+            <button type="button" class="pw-toggle" onclick="togglePassword()" aria-label="Toggle password visibility">
+              <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="field-error" id="err-password"></div>
+        </div>
+
+        <label class="remember">
+          <input type="checkbox" id="remember" />
+          Keep me signed in
+        </label>
+
+        <button type="submit" class="btn-submit">Sign In to HyperSpace</button>
+
+        <p class="terms">
+          By signing in you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </p>
+      </form>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── MOCK USER DATABASE ──
+  const USERS = [
+    { email: 'yuvaraj21@gmail.com',    password: 'Yuvi@2103',   name: 'Yuvaraja Kumaran M',      role: 'Student'           },
+    { email: 'alice@mit.edu',           password: 'Alice#2026',  name: 'Alice Chen',      role: 'CTF Team Lead'   },
+    { email: 'bob@iit.ac.in',           password: 'Bob$ecure1',  name: 'Bob Rajan',       role: 'AI Builder'      },
+    { email: 'zara@stanford.edu',       password: 'Zara!cyber9', name: 'Zara Malik',      role: 'Cyber Defender'  },
+    { email: 'dev@hyperspace.dev',      password: 'Dev@2026!',   name: 'Dev Tester',      role: 'Developer'       },
+  ];
+
+  // ── HELPERS ──
+  function showToast(msg, type = 'error') {
+    const t = document.getElementById('toast');
+    t.textContent = (type === 'success' ? '✔ ' : '✖ ') + msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function setFieldState(inputEl, errEl, isValid, msg = '') {
+    inputEl.classList.toggle('invalid', !isValid);
+    inputEl.classList.toggle('valid',  isValid);
+    errEl.textContent = msg;
+    errEl.style.display = msg ? 'block' : 'none';
+  }
+
+  function clearField(inputEl, errEl) {
+    inputEl.classList.remove('invalid', 'valid');
+    errEl.style.display = 'none';
+  }
+
+  // ── LOGIN HANDLER ──
+  function handleLogin(e) {
+    e.preventDefault();
+    const emailEl    = document.getElementById('email');
+    const passEl     = document.getElementById('password');
+    const errEmail   = document.getElementById('err-email');
+    const errPass    = document.getElementById('err-password');
+    const btn        = document.querySelector('.btn-submit');
+    const remember   = document.getElementById('remember').checked;
+
+    // Clear previous states
+    clearField(emailEl, errEmail);
+    clearField(passEl, errPass);
+
+    const email    = emailEl.value.trim().toLowerCase();
+    const password = passEl.value;
+    let valid = true;
+
+    // Basic validation
+    if (!email) {
+      setFieldState(emailEl, errEmail, false, 'Email address is required.');
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setFieldState(emailEl, errEmail, false, 'Enter a valid email address.');
+      valid = false;
+    }
+
+    if (!password) {
+      setFieldState(passEl, errPass, false, 'Password is required.');
+      valid = false;
+    } else if (password.length < 6) {
+      setFieldState(passEl, errPass, false, 'Password must be at least 6 characters.');
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // Loading state
+    btn.classList.add('loading');
+    btn.textContent = 'Signing in';
+
+    // Simulate async auth (500ms delay)
+    setTimeout(() => {
+      const storedUsersStr = localStorage.getItem('hs_users');
+      const storedUsers = storedUsersStr ? JSON.parse(storedUsersStr) : [];
+      const ALL_USERS = [...USERS, ...storedUsers];
+
+      const user = ALL_USERS.find(
+        u => u.email === email && u.password === password
+      );
+
+      if (user) {
+        // ✅ Success
+        setFieldState(emailEl, errEmail, true, '');
+        setFieldState(passEl, errPass, true, '');
+
+        // Persist session
+        const session = { name: user.name, email: user.email, role: user.role, ts: Date.now() };
+        if (remember) {
+          localStorage.setItem('hs_user', JSON.stringify(session));
+        } else {
+          sessionStorage.setItem('hs_user', JSON.stringify(session));
+        }
+
+        showToast(`Welcome back, ${user.name}! Redirecting…`, 'success');
+        btn.textContent = '✔ Signed In';
+
+        setTimeout(() => { window.location.href = 'index.html'; }, 1800);
+
+      } else {
+        // ❌ Wrong credentials
+        btn.classList.remove('loading');
+        btn.textContent = 'Sign In to HyperSpace';
+
+        // Figure out which field is wrong
+        const emailExists = ALL_USERS.some(u => u.email === email);
+        if (!emailExists) {
+          setFieldState(emailEl, errEmail, false, 'No account found with this email.');
+        } else {
+          setFieldState(passEl, errPass, false, 'Incorrect password. Please try again.');
+        }
+
+        showToast('Sign in failed. Check your credentials.', 'error');
+      }
+    }, 500);
+  }
+
+  // Live clear on input
+  document.getElementById('email').addEventListener('input', function() {
+    clearField(this, document.getElementById('err-email'));
+  });
+  document.getElementById('password').addEventListener('input', function() {
+    clearField(this, document.getElementById('err-password'));
+  });
+
+  // ── PASSWORD TOGGLE ──
+  function togglePassword() {
+    const input = document.getElementById('password');
+    const icon  = document.getElementById('eye-icon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+    } else {
+      input.type = 'password';
+      icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    }
+  }
+
+  // ── NEURAL NETWORK (Brand Panel) ──
+  const canvas = document.getElementById('brand-canvas');
+  if (canvas) {
+    const ctx   = canvas.getContext('2d');
+    const NODES = 40, RANGE = 150;
+    let nodes   = [];
+
+    function resize() {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+
+    function init() {
+      nodes = [];
+      for (let i = 0; i < NODES; i++) {
+        nodes.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          dx: (Math.random() - 0.5) * 0.5,
+          dy: (Math.random() - 0.5) * 0.5,
+          r:  Math.random() * 2 + 1.2,
+          pulse: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const t = Date.now() * 0.001;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i], b = nodes[j];
+          const d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (d < RANGE) {
+            const alpha = (1 - d / RANGE) * 0.22;
+            const g = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+            g.addColorStop(0, `rgba(107,140,255,${alpha})`);
+            g.addColorStop(1, `rgba(167,139,250,${alpha})`);
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = g; ctx.lineWidth = 1; ctx.stroke();
+          }
+        }
+      }
+      nodes.forEach(n => {
+        const glow = 0.5 + 0.35 * Math.sin(t * 1.4 + n.pulse);
+        const aura = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r * 5);
+        aura.addColorStop(0, `rgba(107,140,255,${glow * 0.3})`);
+        aura.addColorStop(1, 'rgba(107,140,255,0)');
+        ctx.beginPath(); ctx.arc(n.x, n.y, n.r * 5, 0, Math.PI * 2);
+        ctx.fillStyle = aura; ctx.fill();
+        ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(107,140,255,${glow})`; ctx.fill();
+        n.x += n.dx; n.y += n.dy;
+        if (n.x < 0 || n.x > canvas.width)  n.dx *= -1;
+        if (n.y < 0 || n.y > canvas.height) n.dy *= -1;
+      });
+      requestAnimationFrame(draw);
+    }
+
+    resize(); init(); draw();
+    window.addEventListener('resize', () => { resize(); init(); });
+  }
+</script>
+
+</body>
+</html>
